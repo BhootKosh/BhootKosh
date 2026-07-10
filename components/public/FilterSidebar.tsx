@@ -7,8 +7,10 @@ import {
   ghostTypeLabel,
   GHOST_TYPES,
   DANGER_LEVELS,
+  cn,
 } from "@/lib/utils";
 import { Filter, RotateCcw, X } from "lucide-react";
+import { BrutalSelect } from "@/components/ui/BrutalSelect";
 
 export function FilterSidebar({
   regions = [],
@@ -28,15 +30,21 @@ export function FilterSidebar({
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
+  const type = searchParams.get("type") || "";
+  const region = searchParams.get("region") || "";
+  const danger = searchParams.get("danger") || "";
+  const habitat = searchParams.get("habitat") || "";
+  const sort = searchParams.get("sort") || "newest";
+
   const activeCount = useMemo(() => {
     let n = 0;
-    if (searchParams.get("type")) n++;
-    if (searchParams.get("region")) n++;
-    if (searchParams.get("danger")) n++;
-    if (searchParams.get("habitat")) n++;
-    if (searchParams.get("sort") && searchParams.get("sort") !== "newest") n++;
+    if (type) n++;
+    if (region) n++;
+    if (danger) n++;
+    if (habitat) n++;
+    if (sort && sort !== "newest") n++;
     return n;
-  }, [searchParams]);
+  }, [type, region, danger, habitat, sort]);
 
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -61,67 +69,83 @@ export function FilterSidebar({
     };
   }, [open]);
 
-  const selectClass =
-    "w-full min-h-11 border-[3px] border-ink bg-white px-3 py-2.5 text-sm font-medium text-ink shadow-[2px_2px_0_0_#0a0a0a] focus:outline-none focus:ring-2 focus:ring-saffron";
+  const typeOptions = useMemo(
+    () => [
+      { value: "", label: "All types" },
+      ...GHOST_TYPES.map((t) => ({ value: t, label: ghostTypeLabel(t) })),
+    ],
+    []
+  );
+
+  const regionOptions = useMemo(
+    () => [
+      { value: "", label: "All regions" },
+      ...regions.map((r) => ({ value: r.slug, label: r.name })),
+    ],
+    [regions]
+  );
+
+  const dangerOptions = useMemo(
+    () => [
+      { value: "", label: "All levels" },
+      ...DANGER_LEVELS.map((d) => ({ value: d, label: dangerLabel(d) })),
+    ],
+    []
+  );
+
+  const sortOptions = [
+    { value: "newest", label: "Newest" },
+    { value: "name", label: "Name A–Z" },
+    { value: "popularity", label: "Most viewed" },
+  ];
+
+  const inputClass =
+    "w-full min-h-12 border-[3px] border-ink bg-white px-3 py-2.5 text-sm font-bold text-ink shadow-[3px_3px_0_0_#0a0a0a] placeholder:font-medium placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-saffron";
 
   const fields = (
     <div className="space-y-4">
       {showType && (
         <Field label="Type">
-          <select
-            className={selectClass}
-            value={searchParams.get("type") || ""}
-            onChange={(e) => update("type", e.target.value)}
-          >
-            <option value="">All types</option>
-            {GHOST_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {ghostTypeLabel(t)}
-              </option>
-            ))}
-          </select>
+          <BrutalSelect
+            aria-label="Spirit type"
+            value={type}
+            onChange={(v) => update("type", v)}
+            options={typeOptions}
+            placeholder="All types"
+          />
         </Field>
       )}
 
       {showRegion && regions.length > 0 && (
         <Field label="Region">
-          <select
-            className={selectClass}
-            value={searchParams.get("region") || ""}
-            onChange={(e) => update("region", e.target.value)}
-          >
-            <option value="">All regions</option>
-            {regions.map((r) => (
-              <option key={r.slug} value={r.slug}>
-                {r.name}
-              </option>
-            ))}
-          </select>
+          <BrutalSelect
+            aria-label="Region"
+            value={region}
+            onChange={(v) => update("region", v)}
+            options={regionOptions}
+            placeholder="All regions"
+          />
         </Field>
       )}
 
       {showDanger && (
         <Field label="Danger level">
-          <select
-            className={selectClass}
-            value={searchParams.get("danger") || ""}
-            onChange={(e) => update("danger", e.target.value)}
-          >
-            <option value="">All levels</option>
-            {DANGER_LEVELS.map((d) => (
-              <option key={d} value={d}>
-                {dangerLabel(d)}
-              </option>
-            ))}
-          </select>
+          <BrutalSelect
+            aria-label="Danger level"
+            value={danger}
+            onChange={(v) => update("danger", v)}
+            options={dangerOptions}
+            placeholder="All levels"
+          />
         </Field>
       )}
 
       <Field label="Habitat">
         <input
-          className={selectClass}
+          className={inputClass}
           placeholder="e.g. forest, fort…"
-          defaultValue={searchParams.get("habitat") || ""}
+          defaultValue={habitat}
+          key={habitat}
           onBlur={(e) => update("habitat", e.target.value.trim())}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -133,15 +157,12 @@ export function FilterSidebar({
 
       {showSort && (
         <Field label="Sort">
-          <select
-            className={selectClass}
-            value={searchParams.get("sort") || "newest"}
-            onChange={(e) => update("sort", e.target.value)}
-          >
-            <option value="newest">Newest</option>
-            <option value="name">Name A–Z</option>
-            <option value="popularity">Most viewed</option>
-          </select>
+          <BrutalSelect
+            aria-label="Sort"
+            value={sort}
+            onChange={(v) => update("sort", v === "newest" ? "" : v)}
+            options={sortOptions}
+          />
         </Field>
       )}
 
@@ -149,7 +170,7 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={clearAll}
-          className="flex w-full min-h-11 items-center justify-center gap-2 border-[3px] border-ink bg-white px-3 py-2 text-xs font-bold uppercase text-ink shadow-[3px_3px_0_0_#0a0a0a] transition active:translate-x-0.5 active:translate-y-0.5"
+          className="flex w-full min-h-12 items-center justify-center gap-2 border-[3px] border-ink bg-white px-3 py-2.5 text-xs font-bold uppercase text-ink shadow-[4px_4px_0_0_#0a0a0a] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#0a0a0a] active:translate-x-0.5 active:translate-y-0.5"
         >
           <RotateCcw size={14} />
           Clear filters ({activeCount})
@@ -160,7 +181,7 @@ export function FilterSidebar({
 
   return (
     <>
-      {/* Mobile filter trigger */}
+      {/* Mobile */}
       <div className="mb-4 lg:hidden">
         <button
           type="button"
@@ -176,31 +197,57 @@ export function FilterSidebar({
               </span>
             )}
           </span>
-          <span className="text-[10px] tracking-wider text-ink/70">
-            Customize
-          </span>
+          <span className="text-[10px] tracking-wider text-ink/70">Open</span>
         </button>
       </div>
 
-      {/* Desktop sticky sidebar — original simple panel */}
-      <aside className="sidebar-sticky no-scrollbar hidden space-y-4 border-[3px] border-ink bg-gold p-4 shadow-[4px_4px_0_0_#0a0a0a] lg:block">
-        <div className="flex items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
-          <h2 className="font-display text-sm uppercase text-ink">
-            Customize
-          </h2>
-          {activeCount > 0 && (
-            <span className="border-2 border-ink bg-ink px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold">
-              {activeCount} on
-            </span>
-          )}
+      {/* Desktop neo-brutal sticky sidebar */}
+      <aside className="sidebar-sticky relative hidden lg:block">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 translate-x-[5px] translate-y-[5px] bg-ink"
+        />
+        <div className="relative border-[3px] border-ink bg-gold">
+          <div className="relative overflow-hidden border-b-[3px] border-ink bg-saffron px-4 py-3">
+            <div className="pointer-events-none absolute inset-0 halftone opacity-25" />
+            <div className="relative flex items-center justify-between gap-2">
+              <div>
+                <p className="font-display text-sm uppercase leading-none text-ink">
+                  Filters
+                </p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-ink/75">
+                  Encyclopedia rail
+                </p>
+              </div>
+              <span
+                className={cn(
+                  "border-[3px] border-ink px-2 py-1 text-[10px] font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a]",
+                  activeCount > 0
+                    ? "bg-ink text-gold"
+                    : "bg-white text-ink"
+                )}
+              >
+                {activeCount > 0 ? `${activeCount} on` : "Ready"}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4 p-4">
+            <p className="border-[3px] border-ink bg-bg-page px-2.5 py-2 text-[11px] font-bold leading-snug text-ink shadow-[3px_3px_0_0_#0a0a0a]">
+              Pick type, region, danger & sort — no bland OS menus.
+            </p>
+            {fields}
+          </div>
+
+          <div className="border-t-[3px] border-ink bg-ink px-3 py-2">
+            <p className="text-center text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+              BhootKosh
+            </p>
+          </div>
         </div>
-        <p className="text-[11px] font-medium leading-snug text-ink/70">
-          Tune the encyclopedia feed — type, region, danger & sort order.
-        </p>
-        {fields}
       </aside>
 
-      {/* Mobile bottom sheet */}
+      {/* Mobile sheet */}
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <button
@@ -209,8 +256,8 @@ export function FilterSidebar({
             aria-label="Close filters"
             onClick={() => setOpen(false)}
           />
-          <div className="sheet-enter absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto border-t-[3px] border-ink bg-bg-page p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-[0_-8px_0_0_#0a0a0a]">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="sheet-enter absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-y-auto border-t-[3px] border-ink bg-bg-page pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-[0_-8px_0_0_#0a0a0a]">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-ink bg-gold px-4 py-3">
               <h2 className="font-display text-base uppercase text-ink">
                 Filters
               </h2>
@@ -223,14 +270,16 @@ export function FilterSidebar({
                 <X size={18} />
               </button>
             </div>
-            {fields}
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="brutal-btn brutal-btn-primary mt-5 w-full"
-            >
-              Show results
-            </button>
+            <div className="p-4">{fields}</div>
+            <div className="px-4 pb-3">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="brutal-btn brutal-btn-primary w-full"
+              >
+                Show results
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -247,7 +296,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-ink/70">
+      <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.12em] text-ink">
         {label}
       </label>
       {children}
