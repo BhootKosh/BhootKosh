@@ -4,7 +4,7 @@ export const runtime = "edge";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-/** Favicon — classic sheet ghost on saffron */
+/** Favicon — unmistakable sheet ghost */
 export default function Icon() {
   return new ImageResponse(
     (
@@ -16,39 +16,41 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           background: "#e85d04",
-          border: "2px solid #0a0a0a",
         }}
       >
-        {/* ghost body */}
+        {/* ghost: rounded top, flat-ish body */}
         <div
           style={{
-            width: 18,
-            height: 20,
+            width: 20,
+            height: 22,
             background: "#fffdf8",
             border: "2px solid #0a0a0a",
-            borderRadius: "10px 10px 4px 4px",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            borderBottomLeftRadius: 4,
+            borderBottomRightRadius: 4,
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-start",
             justifyContent: "center",
-            gap: 3,
-            paddingTop: 4,
+            gap: 4,
+            paddingTop: 6,
           }}
         >
           <div
             style={{
-              width: 3,
-              height: 4,
+              width: 3.5,
+              height: 3.5,
               background: "#0a0a0a",
-              borderRadius: 2,
+              borderRadius: 999,
               display: "flex",
             }}
           />
           <div
             style={{
-              width: 3,
-              height: 4,
+              width: 3.5,
+              height: 3.5,
               background: "#0a0a0a",
-              borderRadius: 2,
+              borderRadius: 999,
               display: "flex",
             }}
           />

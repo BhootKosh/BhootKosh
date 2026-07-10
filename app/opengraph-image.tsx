@@ -5,9 +5,6 @@ export const alt = "BhootKosh — Indian Folklore Archive";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/**
- * Discord / Slack / Twitter embed card — neo-brutal + clear ghost brand.
- */
 export default function OpenGraphImage() {
   return new ImageResponse(
     (
@@ -16,23 +13,22 @@ export default function OpenGraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           background: "#f2e6d0",
-          position: "relative",
           fontFamily: "system-ui, sans-serif",
         }}
       >
         <div
           style={{
-            position: "absolute",
-            inset: 28,
+            margin: 28,
+            width: 1144,
+            height: 574,
             border: "8px solid #0a0a0a",
             boxShadow: "16px 16px 0 #0a0a0a",
             background: "#e85d04",
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
             alignItems: "center",
+            justifyContent: "space-between",
             padding: 48,
             gap: 40,
           }}
@@ -41,96 +37,85 @@ export default function OpenGraphImage() {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: 18,
+              gap: 16,
               flex: 1,
             }}
           >
-            <div style={{ display: "flex", gap: 14 }}>
+            <div style={{ display: "flex", gap: 12 }}>
               <div
                 style={{
                   background: "#f4c430",
                   border: "5px solid #0a0a0a",
                   boxShadow: "6px 6px 0 #0a0a0a",
-                  color: "#0a0a0a",
+                  padding: "10px 16px",
                   fontSize: 22,
                   fontWeight: 800,
-                  letterSpacing: 2,
-                  padding: "10px 18px",
-                  textTransform: "uppercase",
+                  color: "#0a0a0a",
                 }}
               >
-                Archive
+                ARCHIVE
               </div>
               <div
                 style={{
                   background: "#5eead4",
                   border: "5px solid #0a0a0a",
                   boxShadow: "6px 6px 0 #0a0a0a",
-                  color: "#0a0a0a",
+                  padding: "10px 16px",
                   fontSize: 22,
                   fontWeight: 800,
-                  letterSpacing: 2,
-                  padding: "10px 18px",
-                  textTransform: "uppercase",
+                  color: "#0a0a0a",
                 }}
               >
-                Indian Folklore
+                INDIAN FOLKLORE
               </div>
             </div>
-
             <div
               style={{
-                fontSize: 96,
+                fontSize: 100,
                 fontWeight: 900,
                 color: "#0a0a0a",
                 lineHeight: 0.9,
                 letterSpacing: -4,
-                textTransform: "uppercase",
               }}
             >
-              Bhoot
+              BHOOT
             </div>
             <div
               style={{
-                display: "flex",
                 alignSelf: "flex-start",
                 background: "#0a0a0a",
                 color: "#f4c430",
-                fontSize: 96,
+                fontSize: 100,
                 fontWeight: 900,
                 lineHeight: 0.95,
                 letterSpacing: -4,
-                textTransform: "uppercase",
-                padding: "4px 20px 12px",
+                padding: "4px 18px 10px",
                 boxShadow: "10px 10px 0 #f4c430",
               }}
             >
-              Kosh
+              KOSH
             </div>
-
             <div
               style={{
                 background: "#fffdf8",
                 border: "5px solid #0a0a0a",
                 boxShadow: "8px 8px 0 #0a0a0a",
-                color: "#0a0a0a",
+                padding: "14px 18px",
                 fontSize: 26,
                 fontWeight: 700,
-                maxWidth: 640,
-                padding: "14px 18px",
-                lineHeight: 1.3,
+                color: "#0a0a0a",
+                maxWidth: 620,
               }}
             >
-              Illustrated archive of Indian ghosts, spirits, demons & haunted
-              places
+              Illustrated archive of Indian ghosts, spirits & haunted places
             </div>
           </div>
 
-          {/* Big ghost mascot */}
+          {/* Huge classic sheet ghost */}
           <div
             style={{
-              width: 260,
-              height: 260,
+              width: 280,
+              height: 280,
               background: "#f4c430",
               border: "8px solid #0a0a0a",
               boxShadow: "12px 12px 0 #0a0a0a",
@@ -142,45 +127,36 @@ export default function OpenGraphImage() {
           >
             <div
               style={{
-                width: 150,
-                height: 170,
+                width: 160,
+                height: 190,
                 background: "#fffdf8",
-                border: "7px solid #0a0a0a",
-                borderRadius: "80px 80px 20px 20px",
+                border: "8px solid #0a0a0a",
+                borderTopLeftRadius: 90,
+                borderTopRightRadius: 90,
+                borderBottomLeftRadius: 18,
+                borderBottomRightRadius: 18,
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                alignItems: "flex-start",
                 justifyContent: "center",
-                gap: 14,
-                paddingTop: 20,
+                gap: 28,
+                paddingTop: 52,
               }}
             >
-              <div style={{ display: "flex", gap: 22 }}>
-                <div
-                  style={{
-                    width: 22,
-                    height: 28,
-                    background: "#0a0a0a",
-                    borderRadius: 12,
-                    display: "flex",
-                  }}
-                />
-                <div
-                  style={{
-                    width: 22,
-                    height: 28,
-                    background: "#0a0a0a",
-                    borderRadius: 12,
-                    display: "flex",
-                  }}
-                />
-              </div>
               <div
                 style={{
-                  width: 40,
-                  height: 14,
-                  borderBottom: "6px solid #0a0a0a",
-                  borderRadius: "0 0 20px 20px",
+                  width: 24,
+                  height: 32,
+                  background: "#0a0a0a",
+                  borderRadius: 999,
+                  display: "flex",
+                }}
+              />
+              <div
+                style={{
+                  width: 24,
+                  height: 32,
+                  background: "#0a0a0a",
+                  borderRadius: 999,
                   display: "flex",
                 }}
               />
