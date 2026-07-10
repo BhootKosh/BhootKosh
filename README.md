@@ -1,140 +1,106 @@
 <p align="center">
-  <img src="public/images/logo.svg" width="120" alt="BhootKosh logo — neo-brutal sheet ghost" />
+  <img src="public/images/logo.svg" width="100" alt="BhootKosh logo" />
 </p>
 
-<h1 align="center">BhootKosh</h1>
+# BhootKosh
 
-<p align="center">
-  <strong>The illustrated archive of Indian ghosts, spirits, demons,<br/>haunted places &amp; folklore.</strong>
-</p>
+**Indian Folklore Archive**
 
-<p align="center">
-  <em>Where oral legends become a living encyclopedia — bold, cultural, and carefully told.</em>
-</p>
+BhootKosh is a public website for documenting Indian ghosts, spirits, demons, haunted places, and regional legends. The name combines *bhoot* (spirit) and *kosh* (treasury or archive).
 
-<p align="center">
-  <img src="public/images/og-default.jpg" width="720" alt="BhootKosh brand banner" />
-</p>
+It presents folklore as cultural material for learning and reference—not as sensational horror content.
 
 ---
 
-## What is this?
+## Purpose
 
-**BhootKosh** (*Bhoot* = ghost/spirit · *Kosh* = treasury/archive) is a digital folklore archive for the Indian subcontinent.
+India’s oral traditions are vast and unevenly recorded. The same figure may appear under different names across states and languages. Stories change with retelling. BhootKosh aims to:
 
-It collects the stories people still tell after dark — the **Chudail** at the peepal tree, the **Vetala** in the ruins, the empty streets of **Kuldhara**, the cries at **Shaniwar Wada** — and presents them as **illustrated encyclopedia entries**, not clickbait horror.
+- Collect and organise folklore entries in a clear, encyclopedic form  
+- Note regional context where possible  
+- Distinguish legend and oral tradition from verified history  
+- Offer a place for the public to submit local accounts for editorial review  
 
-This is **culture first**: regional names, contradictory oral versions, disclaimers, and respect for living traditions.
+Content is intended for cultural and educational use. Folklore is not scientific fact. Accounts of haunted places are narrative, not travel or safety guidance.
 
 ---
 
-## A taste of the archive
+## What you can explore
 
-### Spirits & beings
+### Spirits and beings
 
-|  |  |  |
-|:---:|:---:|:---:|
-| <img src="public/images/ghosts/chudail.jpg" width="220" alt="Chudail"/><br/>**Chudail** | <img src="public/images/ghosts/vetala.jpg" width="220" alt="Vetala"/><br/>**Vetala** | <img src="public/images/ghosts/nishi-daak.jpg" width="220" alt="Nishi Daak"/><br/>**Nishi Daak** |
-| <img src="public/images/ghosts/nagin.jpg" width="220" alt="Nagin"/><br/>**Nagin** | <img src="public/images/ghosts/rakshasa.jpg" width="220" alt="Rakshasa"/><br/>**Rakshasa** | <img src="public/images/ghosts/mohini-yakshi.jpg" width="220" alt="Mohini Yakshi"/><br/>**Mohini Yakshi** |
+Illustrated entries on well-known and regional figures—for example Chudail, Vetala, Nishi Daak, Nagin, Rakshasa, and Mohini Yakshi—covering appearance, behaviour, origin, and cultural notes where available.
 
-Fifteen+ illustrated entries across types: female spirits, restless dead, demons, forest & river beings, village lore, shape-shifters, and more.
+<p align="center">
+  <img src="public/images/ghosts/chudail.jpg" width="200" alt="Chudail" />
+  &nbsp;
+  <img src="public/images/ghosts/vetala.jpg" width="200" alt="Vetala" />
+  &nbsp;
+  <img src="public/images/ghosts/nishi-daak.jpg" width="200" alt="Nishi Daak" />
+</p>
 
 ### Haunted places
 
-|  |  |  |
-|:---:|:---:|:---:|
-| <img src="public/images/places/bhangarh-1.jpg" width="240" alt="Bhangarh Fort"/><br/>**Bhangarh Fort** · Rajasthan | <img src="public/images/places/kuldhara-1.jpg" width="240" alt="Kuldhara"/><br/>**Kuldhara** · Rajasthan | <img src="public/images/places/shaniwar-1.jpg" width="240" alt="Shaniwar Wada"/><br/>**Shaniwar Wada** · Pune |
-
-Also: **Dumas Beach** (Gujarat), **Dow Hill** (Kurseong), and more — history, legend, and cultural caution, side by side.
-
-### Folklore stories
-
-|  |  |
-|:---:|:---:|
-| <img src="public/images/stories/nishi-daak-story.jpg" width="320" alt="Nishi Daak story"/><br/>*The Call of Nishi Daak* | <img src="public/images/stories/banyan-tree.jpg" width="320" alt="Banyan tree story"/><br/>*The Banyan Tree at Midnight* |
-
-Narrative retellings that sit next to encyclopedia facts — the archive’s human voice.
-
----
-
-## The vibe
+Sites associated with legend and local memory—such as Bhangarh Fort, Kuldhara, Shaniwar Wada, Dumas Beach, and Dow Hill—with history, folklore, and disclaimers presented together.
 
 <p align="center">
-  <img src="public/images/logo.jpg" width="200" alt="BhootKosh brand mark" />
-  &nbsp;&nbsp;
-  <img src="public/images/ghosts/bhoot.jpg" width="280" alt="Bhoot illustration" />
+  <img src="public/images/places/bhangarh-1.jpg" width="220" alt="Bhangarh Fort" />
+  &nbsp;
+  <img src="public/images/places/kuldhara-1.jpg" width="220" alt="Kuldhara" />
+  &nbsp;
+  <img src="public/images/places/shaniwar-1.jpg" width="220" alt="Shaniwar Wada" />
 </p>
 
-- **Neo-brutal UI** — thick black borders, hard shadows, cream paper, saffron & gold
-- **Mobile bottom nav** + desktop sticky filters
-- **Interactive India map** — folklore by state
-- **Discord-ready embeds** — fat Open Graph cards when you share a link
-- **Admin archive desk** — drafts, publish, media, public submissions
+### Stories
 
-This is not a generic horror blog template. It’s an **illustrated treasury** with attitude.
+Short narrative retellings drawn from oral and literary tradition, for readers who want the tale alongside the encyclopedia entry.
 
----
+<p align="center">
+  <img src="public/images/stories/nishi-daak-story.jpg" width="280" alt="Story illustration" />
+  &nbsp;
+  <img src="public/images/stories/banyan-tree.jpg" width="280" alt="Banyan tree story" />
+</p>
 
-## What’s inside
+### Regions and types
 
-### For readers
-- Ghost **encyclopedia** with search, filters, danger levels, regions  
-- **Detail pages** for spirits, places, stories  
-- **Regions & types** taxonomy  
-- **Random spirit** for the curious  
-- **Submit a legend** for community contributions (editorial review)
+Browse by Indian state or region, and by spirit category (for example female spirits, restless dead, forest spirits, or mythological beings). An interactive map supports geographic exploration.
 
-### For editors
-- Secure admin login  
-- CRUD for ghosts, places, stories, regions, tags  
-- Media library  
-- Submission review workflow  
+### Contribute
+
+Visitors may submit a local legend for review. Nothing is published automatically; editors assess submissions before anything appears on the public site.
 
 ---
 
-## Sample roster
+## Who it is for
 
-**Ghosts:** Chudail · Vetala · Pishacha · Nishi Daak · Brahmadaitya · Yakshini · Daayan · Munjya · Nagin · Preta · Rakshasa · Mohini Yakshi · Pei · Bhoot · Shakchunni  
-
-**Places:** Bhangarh Fort · Kuldhara Village · Dumas Beach · Dow Hill · Shaniwar Wada  
-
----
-
-## Brand mark
-
-| Logo (SVG) | Stamp / photo mark |
-|:---:|:---:|
-| <img src="public/images/logo.svg" width="140" alt="SVG logo"/> | <img src="public/images/logo.jpg" width="140" alt="Ghost brand mark"/> |
-
-A classic **sheet ghost** on saffron — neo-brutal borders, gold disc, hard black shadow. Built to read small (favicon) and large (share cards).
+- Readers interested in Indian folklore and regional mythology  
+- Students and researchers looking for an organised starting point  
+- Communities who wish to share oral accounts carefully and with credit to context  
 
 ---
 
-## Cultural note
+## Approach
 
-BhootKosh is an **educational folklore archive**.
-
-- Legends **vary** by region, language, and teller  
-- Entries are **not** scientific claims  
-- Haunted-place pages are **cultural narrative**, not travel or safety advice  
-- Sensitive topics (e.g. witchcraft accusations) are handled carefully — folklore can touch real harm  
-
-Document with respect. Scare with stories, not with people.
+- Entries aim to respect living traditions and local communities  
+- Variations by place and language are treated as part of the record, not errors  
+- Sensitive topics are handled with care  
+- The archive prioritises clarity and documentation over shock value  
 
 ---
 
-## Built with
+## Sample figures in the collection
 
-Next.js · TypeScript · Tailwind · MongoDB + Prisma · Auth.js · TipTap · Cloudinary · a little late-night courage  
+Chudail · Vetala · Pishacha · Nishi Daak · Brahmadaitya · Yakshini · Daayan · Munjya · Nagin · Preta · Rakshasa · Mohini Yakshi · Pei · Bhoot · Shakchunni  
+
+**Places include:** Bhangarh Fort · Kuldhara · Dumas Beach · Dow Hill · Shaniwar Wada  
 
 ---
 
 <p align="center">
-  <img src="public/images/ghosts/shakchunni.jpg" width="420" alt="Shakchunni" />
+  <img src="public/images/og-default.jpg" width="560" alt="BhootKosh" />
 </p>
 
 <p align="center">
-  <strong>◈ BhootKosh</strong><br/>
-  <em>Indian Folklore Archive</em><br/><br/>
-  <sub>Private project · All rights reserved unless stated by the owner</sub>
+  <strong>BhootKosh</strong><br />
+  Indian Folklore Archive
 </p>
