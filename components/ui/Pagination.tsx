@@ -35,12 +35,12 @@ export function Pagination({
   });
 
   const linkClass =
-    "min-h-9 min-w-9 border-[3px] border-ink px-3 py-1.5 text-xs font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a] transition hover:-translate-x-0.5 hover:-translate-y-0.5";
+    "inline-flex min-h-11 min-w-11 items-center justify-center border-[3px] border-ink px-3 py-2 text-xs font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a] transition active:scale-95 sm:min-h-9 sm:min-w-9 sm:py-1.5 hover:-translate-x-0.5 hover:-translate-y-0.5";
 
   return (
     <nav
       aria-label="Pagination"
-      className="mt-10 flex flex-wrap items-center justify-center gap-2"
+      className="mt-8 flex flex-wrap items-center justify-center gap-2 pb-2 sm:mt-10"
     >
       <Link
         href={hrefFor(Math.max(1, page - 1))}

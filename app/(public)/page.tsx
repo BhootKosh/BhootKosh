@@ -43,7 +43,7 @@ export default async function HomePage() {
       <HeroSection />
 
       <div className="space-y-0">
-        <section className="border-b-[3px] border-ink px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <section className="border-b-[3px] border-ink px-3 py-7 sm:px-6 sm:py-10 lg:px-10">
           <SectionHeader
             chapter="Section 01"
             title="Featured Spirits"
@@ -52,13 +52,13 @@ export default async function HomePage() {
             subtitle="Notable entries from across the subcontinent."
           />
           {featuredGhosts.length === 0 ? (
-            <div className="border-[3px] border-ink bg-white p-8 text-center shadow-[4px_4px_0_0_#0a0a0a]">
+            <div className="border-[3px] border-ink bg-white p-6 text-center shadow-[4px_4px_0_0_#0a0a0a] sm:p-8">
               <p className="font-bold uppercase text-ink">
                 No featured spirits yet. Seed the database to populate content.
               </p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {featuredGhosts.map((g, i) => (
                 <GhostCard key={g.id} ghost={g} priority={i < 3} />
               ))}
@@ -66,7 +66,7 @@ export default async function HomePage() {
           )}
         </section>
 
-        <section className="border-b-[3px] border-ink bg-white/50 px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <section className="border-b-[3px] border-ink bg-white/50 px-3 py-7 sm:px-6 sm:py-10 lg:px-10">
           <SectionHeader
             chapter="Section 02"
             title="Spirit Types"
@@ -74,14 +74,14 @@ export default async function HomePage() {
             linkLabel="All types"
             subtitle="Browse by tradition and lore category."
           />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-5">
             {GHOST_TYPES.map((t, i) => (
               <TypeCard key={t} type={t} count={typeCounts[t] || 0} index={i} />
             ))}
           </div>
         </section>
 
-        <section className="border-b-[3px] border-ink px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <section className="border-b-[3px] border-ink px-3 py-7 sm:px-6 sm:py-10 lg:px-10">
           <SectionHeader
             chapter="Section 03"
             title="Map of India"
@@ -89,12 +89,12 @@ export default async function HomePage() {
             linkLabel="Full map"
             subtitle="Select a state to explore local folklore."
           />
-          <div className="border-[3px] border-ink bg-ink p-2 shadow-[6px_6px_0_0_#0a0a0a] sm:p-3">
+          <div className="border-[3px] border-ink bg-ink p-1.5 shadow-[6px_6px_0_0_#0a0a0a] sm:p-3">
             <IndiaMap regions={regions} variant="compact" />
           </div>
         </section>
 
-        <section className="border-b-[3px] border-ink bg-gold/25 px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <section className="border-b-[3px] border-ink bg-gold/25 px-3 py-7 sm:px-6 sm:py-10 lg:px-10">
           <SectionHeader
             chapter="Section 04"
             title="Haunted Places"
@@ -102,14 +102,14 @@ export default async function HomePage() {
             linkLabel="All places"
             subtitle="Forts, villages, beaches, and ruins of legend."
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {places.map((p, i) => (
               <HauntedPlaceCard key={p.id} place={p} priority={i < 2} />
             ))}
           </div>
         </section>
 
-        <section className="border-b-[3px] border-ink px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <section className="border-b-[3px] border-ink px-3 py-7 sm:px-6 sm:py-10 lg:px-10">
           <SectionHeader
             chapter="Section 05"
             title="Folklore Stories"
@@ -117,14 +117,14 @@ export default async function HomePage() {
             linkLabel="All stories"
             subtitle="Narrative accounts from the archive."
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {stories.map((s) => (
               <StoryCard key={s.id} story={s} />
             ))}
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-ink px-6 py-12 text-center sm:px-12 sm:py-16">
+        <section className="relative overflow-hidden bg-ink px-4 py-10 text-center sm:px-12 sm:py-16">
           <div className="pointer-events-none absolute inset-0 halftone opacity-30" />
           <div className="relative">
             <span className="brutal-stamp bg-accent-pink text-ink">

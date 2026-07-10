@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   dangerLabel,
@@ -7,6 +8,7 @@ import {
   GHOST_TYPES,
   DANGER_LEVELS,
 } from "@/lib/utils";
+import { Filter, RotateCcw, X } from "lucide-react";
 
 export function FilterSidebar({
   regions = [],
@@ -24,6 +26,17 @@ export function FilterSidebar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [open, setOpen] = useState(false);
+
+  const activeCount = useMemo(() => {
+    let n = 0;
+    if (searchParams.get("type")) n++;
+    if (searchParams.get("region")) n++;
+    if (searchParams.get("danger")) n++;
+    if (searchParams.get("habitat")) n++;
+    if (searchParams.get("sort") && searchParams.get("sort") !== "newest") n++;
+    return n;
+  }, [searchParams]);
 
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -31,16 +44,28 @@ export function FilterSidebar({
     else params.delete(key);
     params.delete("page");
     const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
+  function clearAll() {
+    router.push(pathname, { scroll: false });
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   const selectClass =
-    "w-full border-[3px] border-ink bg-white px-3 py-2 text-sm font-medium text-ink shadow-[2px_2px_0_0_#0a0a0a] focus:outline-none focus:ring-2 focus:ring-saffron";
+    "w-full min-h-11 border-[3px] border-ink bg-white px-3 py-2.5 text-sm font-medium text-ink shadow-[2px_2px_0_0_#0a0a0a] focus:outline-none focus:ring-2 focus:ring-saffron";
 
-  return (
-    <aside className="space-y-4 border-[3px] border-ink bg-gold p-4 shadow-[4px_4px_0_0_#0a0a0a]">
-      <h2 className="font-display text-sm uppercase text-ink">Filters</h2>
-
+  const fields = (
+    <div className="space-y-4">
       {showType && (
         <Field label="Type">
           <select
@@ -114,12 +139,102 @@ export function FilterSidebar({
             onChange={(e) => update("sort", e.target.value)}
           >
             <option value="newest">Newest</option>
-            <option value="name">Name</option>
-            <option value="popularity">Popularity</option>
+            <option value="name">Name A–Z</option>
+            <option value="popularity">Most viewed</option>
           </select>
         </Field>
       )}
-    </aside>
+
+      {activeCount > 0 && (
+        <button
+          type="button"
+          onClick={clearAll}
+          className="flex w-full min-h-11 items-center justify-center gap-2 border-[3px] border-ink bg-white px-3 py-2 text-xs font-bold uppercase text-ink shadow-[3px_3px_0_0_#0a0a0a] transition active:translate-x-0.5 active:translate-y-0.5"
+        >
+          <RotateCcw size={14} />
+          Clear filters ({activeCount})
+        </button>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile filter trigger */}
+      <div className="mb-4 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="flex w-full min-h-12 items-center justify-between border-[3px] border-ink bg-gold px-4 py-3 text-sm font-bold uppercase text-ink shadow-[4px_4px_0_0_#0a0a0a] active:translate-x-0.5 active:translate-y-0.5"
+        >
+          <span className="inline-flex items-center gap-2">
+            <Filter size={18} />
+            Filters
+            {activeCount > 0 && (
+              <span className="border-2 border-ink bg-ink px-1.5 py-0.5 text-[10px] text-gold">
+                {activeCount}
+              </span>
+            )}
+          </span>
+          <span className="text-[10px] tracking-wider text-ink/70">
+            Customize
+          </span>
+        </button>
+      </div>
+
+      {/* Desktop sticky sidebar */}
+      <aside className="sidebar-sticky no-scrollbar hidden space-y-4 border-[3px] border-ink bg-gold p-4 shadow-[4px_4px_0_0_#0a0a0a] lg:block">
+        <div className="flex items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
+          <h2 className="font-display text-sm uppercase text-ink">
+            Customize
+          </h2>
+          {activeCount > 0 && (
+            <span className="border-2 border-ink bg-ink px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold">
+              {activeCount} on
+            </span>
+          )}
+        </div>
+        <p className="text-[11px] font-medium leading-snug text-ink/70">
+          Tune the encyclopedia feed — type, region, danger & sort order.
+        </p>
+        {fields}
+      </aside>
+
+      {/* Mobile bottom sheet */}
+      {open && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <button
+            type="button"
+            className="backdrop-enter absolute inset-0 bg-ink/55"
+            aria-label="Close filters"
+            onClick={() => setOpen(false)}
+          />
+          <div className="sheet-enter absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto border-t-[3px] border-ink bg-bg-page p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-[0_-8px_0_0_#0a0a0a]">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-display text-base uppercase text-ink">
+                Filters
+              </h2>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="inline-flex min-h-11 min-w-11 items-center justify-center border-[3px] border-ink bg-white shadow-[2px_2px_0_0_#0a0a0a]"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            {fields}
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="brutal-btn brutal-btn-primary mt-5 w-full"
+            >
+              Show results
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -132,7 +247,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-ink/70">
+      <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-ink/70">
         {label}
       </label>
       {children}

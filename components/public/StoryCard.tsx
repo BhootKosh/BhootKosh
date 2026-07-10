@@ -22,7 +22,7 @@ export function StoryCard({
   return (
     <Link
       href={`/stories/${story.slug}`}
-      className="brutal-card group flex h-full flex-col overflow-hidden bg-white"
+      className="brutal-card group flex h-full flex-col overflow-hidden bg-white active:scale-[0.99]"
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b-[3px] border-ink bg-ink">
         {story.coverImage ? (
@@ -31,8 +31,8 @@ export function StoryCard({
             alt={story.title}
             fill
             priority={priority}
-            className="object-cover transition duration-200 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, 33vw"
+            className="object-cover transition duration-300 ease-out group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="flex h-full items-center justify-center">

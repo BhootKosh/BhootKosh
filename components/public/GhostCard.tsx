@@ -26,18 +26,17 @@ export function GhostCard({
   return (
     <Link
       href={`/ghosts/${ghost.slug}`}
-      className="brutal-card group flex h-full flex-col overflow-hidden bg-white"
+      className="brutal-card group flex h-full flex-col overflow-hidden bg-white active:scale-[0.99]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden border-b-[3px] border-ink bg-ink">
+      <div className="relative aspect-[16/11] overflow-hidden border-b-[3px] border-ink bg-ink sm:aspect-[4/3]">
         {ghost.image ? (
           <Image
             src={ghost.image}
             alt={ghost.name}
             fill
-            // priority implies loading="eager" + high fetch priority (fixes LCP warnings)
             priority={priority}
-            className="object-cover transition duration-200 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, 33vw"
+            className="object-cover transition duration-300 ease-out group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="flex h-full items-center justify-center">
@@ -54,8 +53,8 @@ export function GhostCard({
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col bg-bg-card p-3 sm:p-4">
-        <h3 className="font-display text-lg uppercase leading-tight text-ink group-hover:text-saffron sm:text-xl">
+      <div className="flex flex-1 flex-col bg-bg-card p-3.5 sm:p-4">
+        <h3 className="font-display text-base uppercase leading-tight text-ink transition group-hover:text-saffron sm:text-xl">
           {ghost.name}
         </h3>
         {(ghost.region || ghost.state) && (
@@ -64,7 +63,7 @@ export function GhostCard({
           </p>
         )}
         {ghost.summary && (
-          <p className="mt-2 flex-1 font-serif text-sm leading-snug text-ink/85">
+          <p className="mt-2 line-clamp-2 flex-1 font-serif text-sm leading-snug text-ink/85 sm:line-clamp-3">
             {truncate(ghost.summary, 100)}
           </p>
         )}

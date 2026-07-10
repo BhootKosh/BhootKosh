@@ -94,34 +94,41 @@ export default async function GhostsPage({
   }
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
-      <div className="mb-6 border-b-[3px] border-ink pb-4">
+    <div className="fade-in px-3 py-5 sm:px-6 sm:py-8 lg:px-10">
+      <div className="mb-5 border-b-[3px] border-ink pb-4 sm:mb-6">
         <span className="chapter-label">Encyclopedia</span>
-        <h1 className="mt-2 font-display text-3xl uppercase text-ink sm:text-5xl">
+        <h1 className="mt-2 font-display text-3xl uppercase leading-[0.95] text-ink sm:text-5xl">
           Ghost Encyclopedia
         </h1>
         <p className="mt-2 max-w-2xl font-serif text-sm text-muted">
           Search and filter Indian spirits, demons, and mythological beings.
         </p>
-        <div className="mt-5">
+        <div className="mt-4 sm:mt-5">
           <Suspense fallback={<LoadingState label="Loading search…" />}>
             <SearchBar placeholder="Search by name…" />
           </Suspense>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
+      <div className="grid items-start gap-5 lg:grid-cols-[260px_1fr] lg:gap-7">
         <Suspense fallback={null}>
           <FilterSidebar regions={regions} />
         </Suspense>
-        <div>
-          <p className="mb-3 text-xs font-bold uppercase tracking-wide text-ink">
-            {total} result{total === 1 ? "" : "s"}
-          </p>
+        <div className="min-w-0">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-bold uppercase tracking-wide text-ink">
+              {total} result{total === 1 ? "" : "s"}
+            </p>
+            {(type || region || danger || habitat || sort !== "newest") && (
+              <p className="text-[10px] font-bold uppercase tracking-wide text-saffron">
+                Filters active
+              </p>
+            )}
+          </div>
           {ghosts.length === 0 ? (
             <EmptyState title="No spirits found" />
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
               {ghosts.map((g, i) => (
                 <GhostCard key={g.id} ghost={g} priority={i < 3} />
               ))}

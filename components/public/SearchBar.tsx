@@ -27,18 +27,31 @@ export function SearchBar({
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative w-full max-w-md">
-      <Search
-        size={16}
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink"
-      />
-      <input
-        type="search"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
-        className="w-full border-[3px] border-ink bg-white py-2.5 pl-9 pr-3 text-sm font-medium text-ink placeholder:text-muted shadow-[3px_3px_0_0_#0a0a0a] focus:outline-none focus:ring-2 focus:ring-saffron"
-      />
+    <form
+      onSubmit={onSubmit}
+      className="relative flex w-full max-w-xl gap-2 sm:max-w-md"
+    >
+      <div className="relative min-w-0 flex-1">
+        <Search
+          size={18}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink"
+        />
+        <input
+          type="search"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
+          enterKeyHint="search"
+          autoComplete="off"
+          className="w-full min-h-12 border-[3px] border-ink bg-white py-2.5 pl-10 pr-3 text-base font-medium text-ink placeholder:text-muted shadow-[3px_3px_0_0_#0a0a0a] focus:outline-none focus:ring-2 focus:ring-saffron sm:min-h-11 sm:text-sm"
+        />
+      </div>
+      <button
+        type="submit"
+        className="hidden min-h-11 shrink-0 border-[3px] border-ink bg-saffron px-4 text-xs font-bold uppercase text-white shadow-[3px_3px_0_0_#0a0a0a] sm:inline-flex sm:items-center"
+      >
+        Search
+      </button>
     </form>
   );
 }
