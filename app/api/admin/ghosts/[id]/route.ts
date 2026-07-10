@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ghostSchema } from "@/lib/validators";
 import { sanitizeSlug } from "@/lib/utils";
+import { revalidateArchive } from "@/lib/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -85,6 +86,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       },
     });
 
+    revalidateArchive("home", "ghosts", "regions", `ghost-${ghost.slug}`);
     return NextResponse.json(ghost);
   } catch (e: unknown) {
     if (
@@ -107,7 +109,17 @@ export async function DELETE(_req: NextRequest, { params }: Ctx) {
 
   try {
     const { id } = await params;
+    const existing = await prisma.ghost.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
     await prisma.ghost.delete({ where: { id } });
+    revalidateArchive(
+      "home",
+      "ghosts",
+      "regions",
+      existing?.slug ? `ghost-${existing.slug}` : "ghosts"
+    );
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });

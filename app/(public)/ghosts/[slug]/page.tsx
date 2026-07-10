@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { DangerBadge } from "@/components/public/DangerBadge";
 import { GhostCard } from "@/components/public/GhostCard";
 import { ShareButtons } from "@/components/public/ShareButtons";
@@ -12,17 +11,26 @@ import {
   dangerLabel,
 } from "@/lib/utils";
 import { buildMetadata, getSiteUrl, ghostJsonLd } from "@/lib/seo";
+import {
+  bumpGhostView,
+  getCachedGhostBySlug,
+  getCachedGhostMeta,
+  getPublishedGhostSlugs,
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const ghosts = await getPublishedGhostSlugs();
+  return ghosts.map((g) => ({ slug: g.slug }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
-    const ghost = await prisma.ghost.findFirst({
-      where: { slug, status: "PUBLISHED" },
-    });
+    const ghost = await getCachedGhostMeta(slug);
     if (!ghost) return { title: "Not found" };
     return buildMetadata({
       title:
@@ -46,17 +54,7 @@ export default async function GhostDetailPage({ params }: Props) {
 
   let ghost;
   try {
-    ghost = await prisma.ghost.findFirst({
-      where: { slug, status: "PUBLISHED" },
-      include: {
-        region: true,
-        tags: true,
-        relatedGhosts: {
-          take: 8,
-          include: { region: { select: { name: true, slug: true } } },
-        },
-      },
-    });
+    ghost = await getCachedGhostBySlug(slug);
   } catch (err) {
     console.error("[ghost detail]", slug, err);
     throw err;
@@ -64,12 +62,8 @@ export default async function GhostDetailPage({ params }: Props) {
 
   if (!ghost) notFound();
 
-  prisma.ghost
-    .update({
-      where: { id: ghost.id },
-      data: { viewCount: { increment: 1 } },
-    })
-    .catch(() => {});
+  // Non-blocking view count — does not delay HTML
+  bumpGhostView(ghost.id);
 
   const url = `${getSiteUrl()}/ghosts/${ghost.slug}`;
   const relatedGhosts = (ghost.relatedGhosts ?? [])
@@ -145,6 +139,7 @@ export default async function GhostDetailPage({ params }: Props) {
               fill
               className="object-cover"
               priority
+              quality={80}
               sizes="(max-width: 1024px) 100vw, 45vw"
             />
           ) : (
@@ -167,6 +162,7 @@ export default async function GhostDetailPage({ params }: Props) {
                 alt={`${ghost.name} gallery ${i + 1}`}
                 fill
                 className="object-cover"
+                quality={70}
                 sizes="25vw"
               />
             </div>

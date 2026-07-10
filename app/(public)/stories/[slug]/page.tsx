@@ -1,23 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { GhostCard } from "@/components/public/GhostCard";
 import { ShareButtons } from "@/components/public/ShareButtons";
 import { ensureHtml } from "@/lib/sanitize";
 import { formatDate } from "@/lib/utils";
 import { buildMetadata, getSiteUrl, plainText, storyJsonLd } from "@/lib/seo";
+import {
+  getCachedStoryBySlug,
+  getCachedStoryMeta,
+  getPublishedStorySlugs,
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const stories = await getPublishedStorySlugs();
+  return stories.map((s) => ({ slug: s.slug }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
-    const story = await prisma.story.findFirst({
-      where: { slug, status: "PUBLISHED" },
-    });
+    const story = await getCachedStoryMeta(slug);
     if (!story) return { title: "Not found" };
     return buildMetadata({
       title: story.seoTitle || story.title,
@@ -37,24 +44,13 @@ export default async function StoryDetailPage({ params }: Props) {
   const { slug } = await params;
   let story;
   try {
-    story = await prisma.story.findFirst({
-      where: { slug, status: "PUBLISHED" },
-      include: {
-        region: true,
-        tags: true,
-        relatedGhosts: {
-          take: 8,
-          include: { region: { select: { name: true, slug: true } } },
-        },
-      },
-    });
+    story = await getCachedStoryBySlug(slug);
   } catch (err) {
     console.error("[story detail]", slug, err);
     throw err;
   }
   if (!story) notFound();
 
-  // Filter client-side — Mongo relation `where` can fail on some Prisma versions
   const relatedGhosts = (story.relatedGhosts ?? [])
     .filter((g) => g.status === "PUBLISHED")
     .slice(0, 4);
@@ -93,6 +89,7 @@ export default async function StoryDetailPage({ params }: Props) {
             fill
             className="object-cover"
             priority
+            quality={80}
             sizes="100vw"
           />
         </div>

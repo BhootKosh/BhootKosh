@@ -1,15 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { GhostCard } from "@/components/public/GhostCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ghostTypeFromSlug, ghostTypeLabel } from "@/lib/utils";
+import { ghostTypeFromSlug, ghostTypeLabel, GHOST_TYPES, ghostTypeSlug } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
 import type { GhostType } from "@prisma/client";
+import { getCachedGhostsByType } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 type Props = { params: Promise<{ slug: string }> };
+
+export function generateStaticParams() {
+  return GHOST_TYPES.map((t) => ({ slug: ghostTypeSlug(t) }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -27,13 +31,9 @@ export default async function TypeDetailPage({ params }: Props) {
   const type = ghostTypeFromSlug(slug);
   if (!type) notFound();
 
-  let ghosts: Awaited<ReturnType<typeof prisma.ghost.findMany>> = [];
+  let ghosts: Awaited<ReturnType<typeof getCachedGhostsByType>> = [];
   try {
-    ghosts = await prisma.ghost.findMany({
-      where: { status: "PUBLISHED", type: type as GhostType },
-      orderBy: { name: "asc" },
-      include: { region: { select: { name: true, slug: true } } },
-    });
+    ghosts = await getCachedGhostsByType(type as GhostType);
   } catch {
     /* empty */
   }

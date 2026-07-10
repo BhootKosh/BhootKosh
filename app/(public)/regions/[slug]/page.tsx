@@ -1,19 +1,28 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { GhostCard } from "@/components/public/GhostCard";
 import { HauntedPlaceCard } from "@/components/public/HauntedPlaceCard";
 import { StoryCard } from "@/components/public/StoryCard";
 import { buildMetadata } from "@/lib/seo";
+import {
+  getCachedRegionBySlug,
+  getCachedRegionMeta,
+  getRegionSlugs,
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const regions = await getRegionSlugs();
+  return regions.map((r) => ({ slug: r.slug }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
-    const region = await prisma.region.findUnique({ where: { slug } });
+    const region = await getCachedRegionMeta(slug);
     if (!region) return { title: "Region" };
     return buildMetadata({
       title: `${region.name} Folklore & Legends`,
@@ -32,23 +41,7 @@ export default async function RegionDetailPage({ params }: Props) {
   const { slug } = await params;
   let region;
   try {
-    region = await prisma.region.findUnique({
-      where: { slug },
-      include: {
-        ghosts: {
-          where: { status: "PUBLISHED" },
-          include: { region: { select: { name: true, slug: true } } },
-        },
-        hauntedPlaces: {
-          where: { status: { equals: "PUBLISHED" } },
-          include: { region: { select: { name: true } } },
-        },
-        stories: {
-          where: { status: "PUBLISHED" },
-          include: { region: { select: { name: true } } },
-        },
-      },
-    });
+    region = await getCachedRegionBySlug(slug);
   } catch {
     notFound();
   }

@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { storySchema } from "@/lib/validators";
 import { sanitizeSlug, getPagination } from "@/lib/utils";
+import { revalidateArchive } from "@/lib/cache";
 import type { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest) {
           : undefined,
       },
     });
+    revalidateArchive("home", "stories", "regions");
     return NextResponse.json(story, { status: 201 });
   } catch (e: unknown) {
     if (

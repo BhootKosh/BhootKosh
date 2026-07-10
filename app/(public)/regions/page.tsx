@@ -1,8 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { IndiaMap } from "@/components/public/IndiaMap";
+import { IndiaMapLazy } from "@/components/public/IndiaMapLazy";
 import { RegionCard } from "@/components/public/RegionCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { buildMetadata } from "@/lib/seo";
+import { getCachedRegionsForMap } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "Regions of Indian Folklore",
@@ -11,12 +11,12 @@ export const metadata = buildMetadata({
   path: "/regions",
 });
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 export default async function RegionsPage() {
-  let regions: Awaited<ReturnType<typeof loadRegions>> = [];
+  let regions: Awaited<ReturnType<typeof getCachedRegionsForMap>> = [];
   try {
-    regions = await loadRegions();
+    regions = await getCachedRegionsForMap();
   } catch {
     /* empty */
   }
@@ -32,7 +32,7 @@ export default async function RegionsPage() {
         spirits, places, and stories.
       </p>
       <div className="mt-8 border-[3px] border-ink bg-ink p-2 shadow-[6px_6px_0_0_#0a0a0a] sm:p-3">
-        <IndiaMap regions={regions} variant="full" />
+        <IndiaMapLazy regions={regions} variant="full" />
       </div>
       <section className="mt-10 border-t-[3px] border-ink pt-8">
         <h2 className="font-display text-2xl uppercase text-ink sm:text-3xl">
@@ -52,47 +52,4 @@ export default async function RegionsPage() {
       </section>
     </div>
   );
-}
-
-async function loadRegions() {
-  const regions = await prisma.region.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      ghosts: {
-        where: { status: "PUBLISHED" },
-        take: 6,
-        orderBy: { name: "asc" },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          type: true,
-          dangerLevel: true,
-        },
-      },
-    },
-  });
-
-  const counts = await Promise.all(
-    regions.map(async (region) => {
-      const [ghosts, hauntedPlaces, stories] = await Promise.all([
-        prisma.ghost.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-        prisma.hauntedPlace.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-        prisma.story.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-      ]);
-
-      return {
-        ...region,
-        _count: { ghosts, hauntedPlaces, stories },
-      };
-    })
-  );
-
-  return counts;
 }

@@ -35,6 +35,7 @@ export function GhostCard({
             alt={ghost.name}
             fill
             priority={priority}
+            quality={priority ? 80 : 70}
             className="object-cover transition duration-300 ease-out group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />

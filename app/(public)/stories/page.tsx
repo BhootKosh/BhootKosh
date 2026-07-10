@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { StoryCard } from "@/components/public/StoryCard";
 import { SearchBar } from "@/components/public/SearchBar";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { getPagination, getTotalPages } from "@/lib/utils";
+import { getTotalPages } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
-import type { Prisma } from "@prisma/client";
+import { getStoryList } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "Folklore Stories",
@@ -15,8 +14,6 @@ export const metadata = buildMetadata({
     "Read curated Indian folklore stories and narrative accounts from the BhootKosh archive.",
   path: "/stories",
 });
-
-export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -29,39 +26,23 @@ export default async function StoriesPage({
   const q = typeof sp.q === "string" ? sp.q : "";
   const region = typeof sp.region === "string" ? sp.region : "";
   const page = Number(typeof sp.page === "string" ? sp.page : "1") || 1;
-  const { skip, take, page: currentPage } = getPagination(page, 9);
 
-  const where: Prisma.StoryWhereInput = { status: "PUBLISHED" };
-  if (q) {
-    where.OR = [
-      { title: { contains: q, mode: "insensitive" } },
-      { summary: { contains: q, mode: "insensitive" } },
-    ];
-  }
-  if (region) where.region = { slug: region };
-
-  let stories: Awaited<ReturnType<typeof prisma.story.findMany>> = [];
+  let stories: Awaited<ReturnType<typeof getStoryList>>["stories"] = [];
   let total = 0;
   let regions: { slug: string; name: string }[] = [];
+  let currentPage = page;
 
   try {
-    const [s, t, r] = await Promise.all([
-      prisma.story.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip,
-        take,
-        include: { region: { select: { name: true } } },
-      }),
-      prisma.story.count({ where }),
-      prisma.region.findMany({
-        select: { slug: true, name: true },
-        orderBy: { name: "asc" },
-      }),
-    ]);
-    stories = s;
-    total = t;
-    regions = r;
+    const data = await getStoryList({
+      q: q || undefined,
+      region: region || undefined,
+      page,
+      pageSize: 9,
+    });
+    stories = data.stories;
+    total = data.total;
+    regions = data.regions;
+    currentPage = data.page;
   } catch {
     /* empty */
   }

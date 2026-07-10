@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { HauntedPlaceCard } from "@/components/public/HauntedPlaceCard";
 import { SearchBar } from "@/components/public/SearchBar";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { getPagination, getTotalPages } from "@/lib/utils";
+import { getTotalPages } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
-import type { Prisma } from "@prisma/client";
+import { getPlaceList } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "Haunted Places of India",
@@ -15,8 +14,6 @@ export const metadata = buildMetadata({
     "Explore legendary haunted forts, villages, beaches, and ruins across India.",
   path: "/haunted-places",
 });
-
-export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -29,40 +26,23 @@ export default async function HauntedPlacesPage({
   const q = typeof sp.q === "string" ? sp.q : "";
   const region = typeof sp.region === "string" ? sp.region : "";
   const page = Number(typeof sp.page === "string" ? sp.page : "1") || 1;
-  const { skip, take, page: currentPage } = getPagination(page, 12);
 
-  const where: Prisma.HauntedPlaceWhereInput = { status: "PUBLISHED" };
-  if (q) {
-    where.OR = [
-      { name: { contains: q, mode: "insensitive" } },
-      { location: { contains: q, mode: "insensitive" } },
-      { legend: { contains: q, mode: "insensitive" } },
-    ];
-  }
-  if (region) where.region = { slug: region };
-
-  let places: Awaited<ReturnType<typeof prisma.hauntedPlace.findMany>> = [];
+  let places: Awaited<ReturnType<typeof getPlaceList>>["places"] = [];
   let total = 0;
   let regions: { slug: string; name: string }[] = [];
+  let currentPage = page;
 
   try {
-    const [p, t, r] = await Promise.all([
-      prisma.hauntedPlace.findMany({
-        where,
-        orderBy: { name: "asc" },
-        skip,
-        take,
-        include: { region: { select: { name: true } } },
-      }),
-      prisma.hauntedPlace.count({ where }),
-      prisma.region.findMany({
-        select: { slug: true, name: true },
-        orderBy: { name: "asc" },
-      }),
-    ]);
-    places = p;
-    total = t;
-    regions = r;
+    const data = await getPlaceList({
+      q: q || undefined,
+      region: region || undefined,
+      page,
+      pageSize: 12,
+    });
+    places = data.places;
+    total = data.total;
+    regions = data.regions;
+    currentPage = data.page;
   } catch {
     /* empty */
   }
@@ -115,8 +95,8 @@ export default async function HauntedPlacesPage({
         </div>
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {places.map((p) => (
-            <HauntedPlaceCard key={p.id} place={p} />
+          {places.map((p, i) => (
+            <HauntedPlaceCard key={p.id} place={p} priority={i < 2} />
           ))}
         </div>
       )}

@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { prisma } from "@/lib/prisma";
 import { GhostCard } from "@/components/public/GhostCard";
 import { SearchBar } from "@/components/public/SearchBar";
 import { FilterSidebar } from "@/components/public/FilterSidebar";
@@ -7,13 +6,12 @@ import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingState } from "@/components/ui/LoadingState";
 import {
-  getPagination,
   getTotalPages,
   DANGER_LEVELS,
   GHOST_TYPES,
 } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
-import type { DangerLevel, GhostType, Prisma } from "@prisma/client";
+import { getGhostList } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "Ghost Encyclopedia",
@@ -21,8 +19,6 @@ export const metadata = buildMetadata({
     "Browse the illustrated encyclopedia of Indian ghosts, spirits, and demons.",
   path: "/ghosts",
 });
-
-export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -39,56 +35,33 @@ export default async function GhostsPage({
   const habitat = typeof sp.habitat === "string" ? sp.habitat : "";
   const sort = typeof sp.sort === "string" ? sp.sort : "newest";
   const page = Number(typeof sp.page === "string" ? sp.page : "1") || 1;
-  const { skip, take, page: currentPage } = getPagination(page, 12);
 
-  const where: Prisma.GhostWhereInput = { status: "PUBLISHED" };
-
-  if (q) {
-    where.OR = [
-      { name: { contains: q, mode: "insensitive" } },
-      { otherNames: { has: q } },
-      { summary: { contains: q, mode: "insensitive" } },
-    ];
-  }
-  if (type && (GHOST_TYPES as readonly string[]).includes(type)) {
-    where.type = type as GhostType;
-  }
-  if (danger && (DANGER_LEVELS as readonly string[]).includes(danger)) {
-    where.dangerLevel = danger as DangerLevel;
-  }
-  if (habitat) {
-    where.habitat = { contains: habitat, mode: "insensitive" };
-  }
-  if (region) {
-    where.region = { slug: region };
-  }
-
-  let orderBy: Prisma.GhostOrderByWithRelationInput = { createdAt: "desc" };
-  if (sort === "name") orderBy = { name: "asc" };
-  if (sort === "popularity") orderBy = { viewCount: "desc" };
-
-  let ghosts: Awaited<ReturnType<typeof prisma.ghost.findMany>> = [];
+  let ghosts: Awaited<ReturnType<typeof getGhostList>>["ghosts"] = [];
   let total = 0;
   let regions: { slug: string; name: string }[] = [];
+  let currentPage = page;
 
   try {
-    const [g, t, r] = await Promise.all([
-      prisma.ghost.findMany({
-        where,
-        orderBy,
-        skip,
-        take,
-        include: { region: { select: { name: true, slug: true } } },
-      }),
-      prisma.ghost.count({ where }),
-      prisma.region.findMany({
-        select: { slug: true, name: true },
-        orderBy: { name: "asc" },
-      }),
-    ]);
-    ghosts = g;
-    total = t;
-    regions = r;
+    const data = await getGhostList({
+      q: q || undefined,
+      type:
+        type && (GHOST_TYPES as readonly string[]).includes(type)
+          ? type
+          : undefined,
+      region: region || undefined,
+      danger:
+        danger && (DANGER_LEVELS as readonly string[]).includes(danger)
+          ? danger
+          : undefined,
+      habitat: habitat || undefined,
+      sort,
+      page,
+      pageSize: 12,
+    });
+    ghosts = data.ghosts;
+    total = data.total;
+    regions = data.regions;
+    currentPage = data.page;
   } catch {
     /* empty */
   }

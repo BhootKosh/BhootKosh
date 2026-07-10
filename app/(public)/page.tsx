@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { HeroSection } from "@/components/public/HeroSection";
 import { GhostCard } from "@/components/public/GhostCard";
 import { HauntedPlaceCard } from "@/components/public/HauntedPlaceCard";
 import { StoryCard } from "@/components/public/StoryCard";
 import { TypeCard } from "@/components/public/TypeCard";
 import { SectionHeader } from "@/components/public/SectionHeader";
-import { IndiaMap } from "@/components/public/IndiaMap";
+import { IndiaMapLazy } from "@/components/public/IndiaMapLazy";
 import { GHOST_TYPES } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
+import { getHomeData } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "BhootKosh | Indian Folklore Archive",
@@ -17,23 +17,24 @@ export const metadata = buildMetadata({
   path: "/",
 });
 
-export const dynamic = "force-dynamic";
+/** Cache homepage for 2 minutes — no force-dynamic N+1 queries */
+export const revalidate = 120;
 
 export default async function HomePage() {
-  let featuredGhosts: Awaited<ReturnType<typeof getFeaturedGhosts>> = [];
-  let places: Awaited<ReturnType<typeof getPlaces>> = [];
-  let stories: Awaited<ReturnType<typeof getStories>> = [];
-  let regions: Awaited<ReturnType<typeof getRegions>> = [];
+  let featuredGhosts: Awaited<ReturnType<typeof getHomeData>>["featuredGhosts"] =
+    [];
+  let places: Awaited<ReturnType<typeof getHomeData>>["places"] = [];
+  let stories: Awaited<ReturnType<typeof getHomeData>>["stories"] = [];
+  let regions: Awaited<ReturnType<typeof getHomeData>>["regions"] = [];
   let typeCounts: Record<string, number> = {};
 
   try {
-    [featuredGhosts, places, stories, regions, typeCounts] = await Promise.all([
-      getFeaturedGhosts(),
-      getPlaces(),
-      getStories(),
-      getRegions(),
-      getTypeCounts(),
-    ]);
+    const data = await getHomeData();
+    featuredGhosts = data.featuredGhosts;
+    places = data.places;
+    stories = data.stories;
+    regions = data.regions;
+    typeCounts = data.typeCounts;
   } catch {
     /* empty */
   }
@@ -90,7 +91,7 @@ export default async function HomePage() {
             subtitle="Select a state to explore local folklore."
           />
           <div className="border-[3px] border-ink bg-ink p-1.5 shadow-[6px_6px_0_0_#0a0a0a] sm:p-3">
-            <IndiaMap regions={regions} variant="compact" />
+            <IndiaMapLazy regions={regions} variant="compact" />
           </div>
         </section>
 
@@ -145,81 +146,4 @@ export default async function HomePage() {
       </div>
     </div>
   );
-}
-
-async function getFeaturedGhosts() {
-  return prisma.ghost.findMany({
-    where: { status: "PUBLISHED", featured: true },
-    take: 6,
-    orderBy: { updatedAt: "desc" },
-    include: { region: { select: { name: true, slug: true } } },
-  });
-}
-
-async function getPlaces() {
-  return prisma.hauntedPlace.findMany({
-    where: { status: "PUBLISHED" },
-    take: 3,
-    orderBy: { updatedAt: "desc" },
-    include: { region: { select: { name: true } } },
-  });
-}
-
-async function getStories() {
-  return prisma.story.findMany({
-    where: { status: "PUBLISHED" },
-    take: 3,
-    orderBy: { createdAt: "desc" },
-    include: { region: { select: { name: true } } },
-  });
-}
-
-async function getRegions() {
-  const regions = await prisma.region.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      ghosts: {
-        where: { status: "PUBLISHED" },
-        take: 4,
-        orderBy: { name: "asc" },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          type: true,
-          dangerLevel: true,
-        },
-      },
-    },
-  });
-
-  return Promise.all(
-    regions.map(async (region) => {
-      const [ghosts, hauntedPlaces, stories] = await Promise.all([
-        prisma.ghost.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-        prisma.hauntedPlace.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-        prisma.story.count({
-          where: { status: "PUBLISHED", regionId: region.id },
-        }),
-      ]);
-
-      return {
-        ...region,
-        _count: { ghosts, hauntedPlaces, stories },
-      };
-    })
-  );
-}
-
-async function getTypeCounts() {
-  const groups = await prisma.ghost.groupBy({
-    by: ["type"],
-    where: { status: "PUBLISHED" },
-    _count: true,
-  });
-  return Object.fromEntries(groups.map((g) => [g.type, g._count]));
 }

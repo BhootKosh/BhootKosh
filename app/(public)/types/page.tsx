@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
 import { TypeCard } from "@/components/public/TypeCard";
 import { GHOST_TYPES } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
+import { getCachedTypeCounts } from "@/lib/data";
 
 export const metadata = buildMetadata({
   title: "Spirit Types",
@@ -10,17 +10,12 @@ export const metadata = buildMetadata({
   path: "/types",
 });
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 export default async function TypesPage() {
   let counts: Record<string, number> = {};
   try {
-    const groups = await prisma.ghost.groupBy({
-      by: ["type"],
-      where: { status: "PUBLISHED" },
-      _count: true,
-    });
-    counts = Object.fromEntries(groups.map((g) => [g.type, g._count]));
+    counts = await getCachedTypeCounts();
   } catch {
     /* empty */
   }

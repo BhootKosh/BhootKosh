@@ -1,23 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { GhostCard } from "@/components/public/GhostCard";
 import { StoryCard } from "@/components/public/StoryCard";
 import { ShareButtons } from "@/components/public/ShareButtons";
 import { ensureHtml } from "@/lib/sanitize";
 import { buildMetadata, getSiteUrl, placeJsonLd, plainText } from "@/lib/seo";
+import {
+  getCachedPlaceBySlug,
+  getCachedPlaceMeta,
+  getPublishedPlaceSlugs,
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const places = await getPublishedPlaceSlugs();
+  return places.map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
-    const place = await prisma.hauntedPlace.findFirst({
-      where: { slug, status: "PUBLISHED" },
-    });
+    const place = await getCachedPlaceMeta(slug);
     if (!place) return { title: "Not found" };
     return buildMetadata({
       title: place.seoTitle || `${place.name} | Haunted Place India`,
@@ -41,21 +48,7 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
   const { slug } = await params;
   let place;
   try {
-    place = await prisma.hauntedPlace.findFirst({
-      where: { slug, status: "PUBLISHED" },
-      include: {
-        region: true,
-        tags: true,
-        relatedGhosts: {
-          take: 8,
-          include: { region: { select: { name: true, slug: true } } },
-        },
-        relatedStories: {
-          take: 6,
-          include: { region: { select: { name: true } } },
-        },
-      },
-    });
+    place = await getCachedPlaceBySlug(slug);
   } catch (err) {
     console.error("[haunted-place detail]", slug, err);
     throw err;
@@ -124,6 +117,7 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
               fill
               className="object-cover"
               priority
+              quality={80}
               sizes="50vw"
             />
           ) : (
@@ -146,6 +140,7 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
                 alt=""
                 fill
                 className="object-cover"
+                quality={70}
                 sizes="25vw"
               />
             </div>

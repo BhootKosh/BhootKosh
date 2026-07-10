@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hauntedPlaceSchema } from "@/lib/validators";
 import { sanitizeSlug } from "@/lib/utils";
+import { revalidateArchive } from "@/lib/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -72,6 +73,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
         },
       },
     });
+    revalidateArchive("home", "places", "regions", `place-${place.slug}`);
     return NextResponse.json(place);
   } catch (e: unknown) {
     if (
@@ -93,7 +95,17 @@ export async function DELETE(_req: NextRequest, { params }: Ctx) {
   }
   try {
     const { id } = await params;
+    const existing = await prisma.hauntedPlace.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
     await prisma.hauntedPlace.delete({ where: { id } });
+    revalidateArchive(
+      "home",
+      "places",
+      "regions",
+      existing?.slug ? `place-${existing.slug}` : "places"
+    );
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
