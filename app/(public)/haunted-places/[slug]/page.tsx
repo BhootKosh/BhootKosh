@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props) {
         place.legend ||
         `History and legend of ${place.name}.`,
       path: `/haunted-places/${place.slug}`,
-      image: place.images[0],
+      image: place.images?.[0],
     });
   } catch {
     return { title: "Haunted Place" };
@@ -43,23 +43,29 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
         region: true,
         tags: true,
         relatedGhosts: {
-          where: { status: "PUBLISHED" },
-          take: 4,
+          take: 8,
           include: { region: { select: { name: true, slug: true } } },
         },
         relatedStories: {
-          where: { status: "PUBLISHED" },
-          take: 3,
+          take: 6,
           include: { region: { select: { name: true } } },
         },
       },
     });
-  } catch {
-    notFound();
+  } catch (err) {
+    console.error("[haunted-place detail]", slug, err);
+    throw err;
   }
   if (!place) notFound();
 
   const url = `${getSiteUrl()}/haunted-places/${place.slug}`;
+  const images = place.images ?? [];
+  const relatedGhosts = (place.relatedGhosts ?? [])
+    .filter((g) => g.status === "PUBLISHED")
+    .slice(0, 4);
+  const relatedStories = (place.relatedStories ?? [])
+    .filter((s) => s.status === "PUBLISHED")
+    .slice(0, 3);
 
   return (
     <article className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
@@ -72,7 +78,6 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* High contrast: pink panel uses black text only */}
         <div className="border-[3px] border-ink bg-accent-pink p-5 shadow-[6px_6px_0_0_#0a0a0a]">
           <span className="border-2 border-ink bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-ink shadow-[2px_2px_0_0_#0a0a0a]">
             Location
@@ -93,9 +98,9 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
           )}
         </div>
         <div className="relative aspect-[16/10] overflow-hidden border-[3px] border-ink bg-ink shadow-[6px_6px_0_0_#0a0a0a]">
-          {place.images[0] ? (
+          {images[0] ? (
             <Image
-              src={place.images[0]}
+              src={images[0]}
               alt={place.name}
               fill
               className="object-cover"
@@ -110,14 +115,20 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {place.images.length > 1 && (
+      {images.length > 1 && (
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {place.images.slice(1).map((img, i) => (
+          {images.slice(1).map((img, i) => (
             <div
               key={i}
               className="relative aspect-video overflow-hidden border-[3px] border-ink shadow-[3px_3px_0_0_#0a0a0a]"
             >
-              <Image src={img} alt="" fill className="object-cover" sizes="25vw" />
+              <Image
+                src={img}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="25vw"
+              />
             </div>
           ))}
         </div>
@@ -151,26 +162,26 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
         <ShareButtons title={place.name} url={url} />
       </div>
 
-      {place.relatedGhosts.length > 0 && (
+      {relatedGhosts.length > 0 && (
         <section className="mt-10">
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">
             Related Ghosts
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {place.relatedGhosts.map((g) => (
+            {relatedGhosts.map((g) => (
               <GhostCard key={g.id} ghost={g} />
             ))}
           </div>
         </section>
       )}
 
-      {place.relatedStories.length > 0 && (
+      {relatedStories.length > 0 && (
         <section className="mt-8">
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">
             Related Stories
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {place.relatedStories.map((s) => (
+            {relatedStories.map((s) => (
               <StoryCard key={s.id} story={s} />
             ))}
           </div>

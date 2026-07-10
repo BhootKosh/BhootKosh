@@ -43,16 +43,21 @@ export default async function StoryDetailPage({ params }: Props) {
         region: true,
         tags: true,
         relatedGhosts: {
-          where: { status: "PUBLISHED" },
-          take: 4,
+          take: 8,
           include: { region: { select: { name: true, slug: true } } },
         },
       },
     });
-  } catch {
-    notFound();
+  } catch (err) {
+    console.error("[story detail]", slug, err);
+    throw err;
   }
   if (!story) notFound();
+
+  // Filter client-side — Mongo relation `where` can fail on some Prisma versions
+  const relatedGhosts = (story.relatedGhosts ?? [])
+    .filter((g) => g.status === "PUBLISHED")
+    .slice(0, 4);
 
   const url = `${getSiteUrl()}/stories/${story.slug}`;
 
@@ -95,9 +100,9 @@ export default async function StoryDetailPage({ params }: Props) {
         )}
       </div>
 
-      {story.tags.length > 0 && (
+      {(story.tags?.length ?? 0) > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          {story.tags.map((t) => (
+          {(story.tags ?? []).map((t) => (
             <span
               key={t.id}
               className="border-2 border-ink bg-white px-2 py-1 text-xs font-bold uppercase text-ink shadow-[2px_2px_0_0_#0a0a0a]"
@@ -121,13 +126,13 @@ export default async function StoryDetailPage({ params }: Props) {
         <ShareButtons title={story.title} url={url} />
       </div>
 
-      {story.relatedGhosts.length > 0 && (
+      {relatedGhosts.length > 0 && (
         <section className="mt-12">
           <h2 className="mb-5 font-display text-2xl uppercase text-ink sm:text-3xl">
             Related Ghosts
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {story.relatedGhosts.map((g) => (
+            {relatedGhosts.map((g) => (
               <GhostCard key={g.id} ghost={g} />
             ))}
           </div>

@@ -6,7 +6,11 @@ import {
 } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { defaultDescription, getSiteUrl, siteName } from "@/lib/seo";
+import {
+  defaultDescription,
+  getMetadataBase,
+  siteName,
+} from "@/lib/seo";
 
 const display = Archivo_Black({
   subsets: ["latin"],
@@ -30,7 +34,7 @@ const serif = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
+  metadataBase: getMetadataBase(),
   title: {
     default: `${siteName} | Indian Folklore Archive`,
     template: `%s | ${siteName}`,

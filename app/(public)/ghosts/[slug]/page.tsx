@@ -51,14 +51,14 @@ export default async function GhostDetailPage({ params }: Props) {
         region: true,
         tags: true,
         relatedGhosts: {
-          where: { status: "PUBLISHED" },
-          take: 4,
+          take: 8,
           include: { region: { select: { name: true, slug: true } } },
         },
       },
     });
-  } catch {
-    notFound();
+  } catch (err) {
+    console.error("[ghost detail]", slug, err);
+    throw err;
   }
 
   if (!ghost) notFound();
@@ -71,6 +71,11 @@ export default async function GhostDetailPage({ params }: Props) {
     .catch(() => {});
 
   const url = `${getSiteUrl()}/ghosts/${ghost.slug}`;
+  const relatedGhosts = (ghost.relatedGhosts ?? [])
+    .filter((g) => g.status === "PUBLISHED")
+    .slice(0, 4);
+  const tags = ghost.tags ?? [];
+  const gallery = ghost.gallery ?? [];
 
   return (
     <article className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
@@ -103,9 +108,9 @@ export default async function GhostDetailPage({ params }: Props) {
           <h1 className="mt-4 font-display text-4xl uppercase leading-[0.95] text-ink sm:text-5xl lg:text-6xl">
             {ghost.name}
           </h1>
-          {ghost.otherNames.length > 0 && (
+          {(ghost.otherNames?.length ?? 0) > 0 && (
             <p className="mt-2 text-xs font-bold uppercase tracking-wide text-ink/70">
-              Also known as: {ghost.otherNames.join(" · ")}
+              Also known as: {(ghost.otherNames ?? []).join(" · ")}
             </p>
           )}
           {ghost.summary && (
@@ -149,9 +154,9 @@ export default async function GhostDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {ghost.gallery.length > 0 && (
+      {gallery.length > 0 && (
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {ghost.gallery.map((img, i) => (
+          {gallery.map((img, i) => (
             <div
               key={i}
               className="relative aspect-video overflow-hidden border-[3px] border-ink shadow-[3px_3px_0_0_#0a0a0a]"
@@ -205,11 +210,11 @@ export default async function GhostDetailPage({ params }: Props) {
         </div>
 
         <aside className="space-y-4">
-          {ghost.tags.length > 0 && (
+          {tags.length > 0 && (
             <div className="border-[3px] border-ink bg-accent-cyan p-4 shadow-[4px_4px_0_0_#0a0a0a]">
               <h3 className="font-display text-xs uppercase text-ink">Tags</h3>
               <div className="mt-3 flex flex-wrap gap-2">
-                {ghost.tags.map((tag) => (
+                {tags.map((tag) => (
                   <span
                     key={tag.id}
                     className="border-2 border-ink bg-white px-2 py-1 text-[10px] font-bold uppercase text-ink shadow-[2px_2px_0_0_#0a0a0a]"
@@ -232,13 +237,13 @@ export default async function GhostDetailPage({ params }: Props) {
         </aside>
       </div>
 
-      {ghost.relatedGhosts.length > 0 && (
+      {relatedGhosts.length > 0 && (
         <section className="mt-10 border-t-[3px] border-ink pt-6">
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">
             Related Spirits
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {ghost.relatedGhosts.map((g) => (
+            {relatedGhosts.map((g) => (
               <GhostCard key={g.id} ghost={g} />
             ))}
           </div>
