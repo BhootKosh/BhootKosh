@@ -1,9 +1,15 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
+import { authConfig } from "@/lib/auth.config";
+
+/**
+ * Edge middleware — only JWT session check.
+ * Must NOT import Prisma / bcrypt / lib/auth (Node-only).
+ */
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  // req.auth may be null if JWT is missing OR invalid/stale
   const isLoggedIn = Boolean(req.auth?.user);
 
   const isAdminPage =

@@ -3,17 +3,14 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { loginSchema } from "./validators";
+import { authConfig } from "./auth.config";
 
 /**
- * Prefer AUTH_SECRET; fall back to NEXTAUTH_SECRET for older setups.
- * Must be stable across restarts or existing session cookies will fail to decode.
+ * Full Auth.js instance (Node runtime only — uses Prisma + bcrypt).
+ * Middleware must import authConfig / edge auth, not this file's providers graph.
  */
-const authSecret =
-  process.env.AUTH_SECRET ||
-  process.env.NEXTAUTH_SECRET ||
-  "bhootkosh-dev-secret-change-me-in-production-32chars";
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       name: "Credentials",
@@ -44,37 +41,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60,
-  },
-  pages: {
-    signIn: "/admin/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email ?? token.email;
-        token.name = user.name ?? token.name;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = (token.id as string) || "";
-        session.user.email = (token.email as string) || session.user.email || "";
-        session.user.name = (token.name as string) || session.user.name;
-      }
-      return session;
-    },
-  },
-  secret: authSecret,
-  trustHost: true,
-  // Avoid noisy JWT decode failures becoming uncaught page errors when cookies are stale
   logger: {
     error(error) {
-      // JWTSessionError is common after secret rotation or corrupt cookies — log briefly
       const name = error?.name || "AuthError";
       if (name === "JWTSessionError") {
         console.warn(
