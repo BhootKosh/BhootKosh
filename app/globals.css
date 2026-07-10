@@ -202,50 +202,79 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+}
 
-  /* ── Neo-brutal SCROLLBAR (page up/down bar on the side) ── */
-  /* Firefox */
-  html {
-    scrollbar-width: auto;
-    scrollbar-color: #e85d04 #0a0a0a;
-  }
+/*
+ * ── Neo-brutal PAGE SCROLLBAR ──
+ * The thin grey bar on the right (screenshot) — replaced with
+ * thick black track + saffron thumb (hard-edge sticker look).
+ * Outside @layer so it wins over browser defaults on Edge/Chrome.
+ */
+html {
+  /* keep classic non-overlay scrollbar where possible */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scrollbar-width: thick; /* Firefox */
+  scrollbar-color: #e85d04 #1a120c; /* thumb | track */
+}
 
-  /* Chromium / Safari / Edge */
-  *::-webkit-scrollbar {
-    width: 14px;
-    height: 14px;
-  }
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 18px !important;
+  height: 18px !important;
+  background: #1a120c;
+}
 
-  *::-webkit-scrollbar-track {
-    background: #0a0a0a;
-    border-left: 2px solid #f4c430;
-  }
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: #1a120c !important; /* dark page edge */
+  border-left: 3px solid #0a0a0a !important;
+  box-shadow: inset 2px 0 0 #f4c430 !important;
+}
 
-  *::-webkit-scrollbar-thumb {
-    background: #e85d04;
-    border: 3px solid #0a0a0a;
-    box-shadow: inset 0 0 0 1px #f4c430;
-    min-height: 48px;
-  }
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff7b29 0%, #e85d04 55%, #c44a00 100%) !important;
+  border: 3px solid #0a0a0a !important;
+  border-radius: 0 !important; /* no soft pill — brutal square */
+  box-shadow:
+    inset 0 0 0 2px #f4c430,
+    2px 0 0 #0a0a0a !important;
+  min-height: 64px !important;
+}
 
-  *::-webkit-scrollbar-thumb:hover {
-    background: #ff7b29;
-  }
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: #f4c430 !important;
+}
 
-  *::-webkit-scrollbar-thumb:active {
-    background: #f4c430;
-  }
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background: #ff6b9d !important;
+}
 
-  *::-webkit-scrollbar-corner {
-    background: #0a0a0a;
-    border: 2px solid #f4c430;
-  }
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: #0a0a0a !important;
+  border: 2px solid #f4c430 !important;
+}
 
-  *::-webkit-scrollbar-button {
-    display: none;
-    width: 0;
-    height: 0;
-  }
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@layer utilities {
+  /* re-open utilities if previous block closed early — keep sidebar helper */
 
   /* Mobile bottom nav offset for main content */
   .has-mobile-nav {
