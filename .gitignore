@@ -26,7 +26,7 @@ dist/
 *.tsbuildinfo
 
 # ---------- Environment & secrets ----------
-# Keep .env.example (or .env.sample) committed as a template
+# Keep .env.example committed as a template only
 .env
 .env.*
 !.env.example
@@ -36,6 +36,8 @@ dist/
 *.key
 secrets/
 credentials/
+.env.credentials.local
+.env.vercel.local
 
 # ---------- Prisma ----------
 # Local SQLite (if ever used); Mongo connection stays in env

@@ -7,7 +7,12 @@ async function main() {
   console.log("Seeding BhootKosh…");
 
   const adminEmail = (process.env.ADMIN_EMAIL || "admin@bhootkosh.com").toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || "ChangeMeSecurePassword123!";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword || adminPassword.length < 12) {
+    throw new Error(
+      "Set ADMIN_PASSWORD in .env (min 12 chars) before seeding. See .env.example."
+    );
+  }
   const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.adminUser.upsert({
