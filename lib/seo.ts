@@ -188,8 +188,8 @@ export function siteJsonLd() {
         logo: {
           "@type": "ImageObject",
           url: `${base}/images/logo.svg`,
-          width: 128,
-          height: 128,
+          width: 512,
+          height: 512,
         },
         image: `${base}/opengraph-image`,
         sameAs: [],

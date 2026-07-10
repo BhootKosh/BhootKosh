@@ -1,188 +1,140 @@
-# BhootKosh
+<p align="center">
+  <img src="public/images/logo.svg" width="120" alt="BhootKosh logo — neo-brutal sheet ghost" />
+</p>
 
-**The illustrated archive of Indian ghosts, spirits, demons, haunted places, and folklore.**
+<h1 align="center">BhootKosh</h1>
 
-BhootKosh is a production-ready full-stack Next.js application: a public folklore encyclopedia plus a secure admin dashboard with real PostgreSQL-backed CRUD, media uploads, public submissions, and SEO.
+<p align="center">
+  <strong>The illustrated archive of Indian ghosts, spirits, demons,<br/>haunted places &amp; folklore.</strong>
+</p>
 
-This project is **100% original**. It is inspired only by the general idea of an illustrated folklore database—not by any third-party design, text, layout, branding, or assets.
+<p align="center">
+  <em>Where oral legends become a living encyclopedia — bold, cultural, and carefully told.</em>
+</p>
 
-## Tech stack
+<p align="center">
+  <img src="public/images/og-default.jpg" width="720" alt="BhootKosh brand banner" />
+</p>
 
-- **Next.js** (App Router) + TypeScript
-- **Tailwind CSS**
-- **MongoDB** (Atlas) + **Prisma**
-- **Auth.js** (NextAuth v5) credentials auth
-- **Zod** + **React Hook Form**
-- **TipTap** rich text
-- **Cloudinary** image uploads
-- Deployable on **Vercel**
+---
 
-## Features
+## What is this?
 
-### Public site
+**BhootKosh** (*Bhoot* = ghost/spirit · *Kosh* = treasury/archive) is a digital folklore archive for the Indian subcontinent.
 
-- Homepage with featured content and CTAs
-- Ghost encyclopedia with search, filters, sort, pagination
-- Ghost detail pages with related spirits and SEO
-- Regions, types, haunted places, folklore stories
-- Random spirit redirect
-- Public “Submit a legend” form (admin review only)
-- Contact form with rate limiting
-- Dynamic metadata, sitemap, robots.txt
+It collects the stories people still tell after dark — the **Chudail** at the peepal tree, the **Vetala** in the ruins, the empty streets of **Kuldhara**, the cries at **Shaniwar Wada** — and presents them as **illustrated encyclopedia entries**, not clickbait horror.
 
-### Admin dashboard (`/admin`)
+This is **culture first**: regional names, contradictory oral versions, disclaimers, and respect for living traditions.
 
-- Secure login / logout (bcrypt + session)
-- Stats dashboard
-- Full CRUD: ghosts, haunted places, stories, regions, tags
-- Media library (Cloudinary)
-- Submission review: approve, reject, delete, convert to ghost/story
-- Draft / publish workflow
+---
 
-## Prerequisites
+## A taste of the archive
 
-- Node.js 20+
-- MongoDB database (MongoDB Atlas recommended)
-- Optional: Cloudinary account (for image uploads)
+### Spirits & beings
 
-## Quick start
+|  |  |  |
+|:---:|:---:|:---:|
+| <img src="public/images/ghosts/chudail.jpg" width="220" alt="Chudail"/><br/>**Chudail** | <img src="public/images/ghosts/vetala.jpg" width="220" alt="Vetala"/><br/>**Vetala** | <img src="public/images/ghosts/nishi-daak.jpg" width="220" alt="Nishi Daak"/><br/>**Nishi Daak** |
+| <img src="public/images/ghosts/nagin.jpg" width="220" alt="Nagin"/><br/>**Nagin** | <img src="public/images/ghosts/rakshasa.jpg" width="220" alt="Rakshasa"/><br/>**Rakshasa** | <img src="public/images/ghosts/mohini-yakshi.jpg" width="220" alt="Mohini Yakshi"/><br/>**Mohini Yakshi** |
 
-### 1. Install dependencies
+Fifteen+ illustrated entries across types: female spirits, restless dead, demons, forest & river beings, village lore, shape-shifters, and more.
 
-```bash
-npm install
-```
+### Haunted places
 
-### 2. Environment variables
+|  |  |  |
+|:---:|:---:|:---:|
+| <img src="public/images/places/bhangarh-1.jpg" width="240" alt="Bhangarh Fort"/><br/>**Bhangarh Fort** · Rajasthan | <img src="public/images/places/kuldhara-1.jpg" width="240" alt="Kuldhara"/><br/>**Kuldhara** · Rajasthan | <img src="public/images/places/shaniwar-1.jpg" width="240" alt="Shaniwar Wada"/><br/>**Shaniwar Wada** · Pune |
 
-```bash
-cp .env.example .env
-```
+Also: **Dumas Beach** (Gujarat), **Dow Hill** (Kurseong), and more — history, legend, and cultural caution, side by side.
 
-Edit `.env`:
+### Folklore stories
 
-```env
-DATABASE_URL="mongodb+srv://USER:PASSWORD@cluster.mongodb.net/bhootkosh?retryWrites=true&w=majority"
-AUTH_SECRET="paste-a-long-random-string"
-AUTH_URL="http://localhost:3000"
-ADMIN_EMAIL="admin@bhootkosh.com"
-ADMIN_PASSWORD="ChangeMeSecurePassword123!"
-CLOUDINARY_CLOUD_NAME=""
-CLOUDINARY_API_KEY=""
-CLOUDINARY_API_SECRET=""
-CLOUDINARY_FOLDER="bhootkosh"
-NEXT_PUBLIC_SITE_URL="http://localhost:3000"
-```
+|  |  |
+|:---:|:---:|
+| <img src="public/images/stories/nishi-daak-story.jpg" width="320" alt="Nishi Daak story"/><br/>*The Call of Nishi Daak* | <img src="public/images/stories/banyan-tree.jpg" width="320" alt="Banyan tree story"/><br/>*The Banyan Tree at Midnight* |
 
-Generate `AUTH_SECRET`:
+Narrative retellings that sit next to encyclopedia facts — the archive’s human voice.
 
-```bash
-openssl rand -base64 32
-```
+---
 
-### 3. Database
+## The vibe
 
-Push the Prisma schema to MongoDB and seed sample content:
+<p align="center">
+  <img src="public/images/logo.jpg" width="200" alt="BhootKosh brand mark" />
+  &nbsp;&nbsp;
+  <img src="public/images/ghosts/bhoot.jpg" width="280" alt="Bhoot illustration" />
+</p>
 
-```bash
-npx prisma db push
-npm run db:seed
-```
+- **Neo-brutal UI** — thick black borders, hard shadows, cream paper, saffron & gold
+- **Mobile bottom nav** + desktop sticky filters
+- **Interactive India map** — folklore by state
+- **Discord-ready embeds** — fat Open Graph cards when you share a link
+- **Admin archive desk** — drafts, publish, media, public submissions
 
-### 4. Run
+This is not a generic horror blog template. It’s an **illustrated treasury** with attitude.
 
-```bash
-npm run dev
-```
+---
 
-- Public site: [http://localhost:3000](http://localhost:3000)
-- Admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+## What’s inside
 
-Default admin credentials come from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env` (seeded).
+### For readers
+- Ghost **encyclopedia** with search, filters, danger levels, regions  
+- **Detail pages** for spirits, places, stories  
+- **Regions & types** taxonomy  
+- **Random spirit** for the curious  
+- **Submit a legend** for community contributions (editorial review)
 
-## MongoDB Atlas tips
+### For editors
+- Secure admin login  
+- CRUD for ghosts, places, stories, regions, tags  
+- Media library  
+- Submission review workflow  
 
-1. Create a free cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas)
-2. Database user + password
-3. Network Access → allow your IP (or `0.0.0.0/0` for development)
-4. Connect → Drivers → copy URI, add database name `bhootkosh` in the path
+---
 
-## Scripts
+## Sample roster
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | ESLint |
-| `npm run db:push` | Push Prisma schema to MongoDB |
-| `npm run db:seed` | Seed admin + sample content |
-| `npm run db:studio` | Prisma Studio |
+**Ghosts:** Chudail · Vetala · Pishacha · Nishi Daak · Brahmadaitya · Yakshini · Daayan · Munjya · Nagin · Preta · Rakshasa · Mohini Yakshi · Pei · Bhoot · Shakchunni  
 
-## Seed data
+**Places:** Bhangarh Fort · Kuldhara Village · Dumas Beach · Dow Hill · Shaniwar Wada  
 
-The seed creates:
+---
 
-- Admin user
-- Indian regions
-- Tags
-- **15 ghosts** (Chudail, Vetala, Pishacha, Nishi Daak, Brahmadaitya, Yakshini, Daayan, Munjya, Nagin, Preta, Rakshasa, Mohini Yakshi, Pei, Bhoot, Shakchunni)
-- **5 haunted places** (Bhangarh Fort, Kuldhara, Dumas Beach, Dow Hill, Shaniwar Wada)
-- **5 stories**
-- 1 sample pending submission
+## Brand mark
 
-## Cloudinary setup
+| Logo (SVG) | Stamp / photo mark |
+|:---:|:---:|
+| <img src="public/images/logo.svg" width="140" alt="SVG logo"/> | <img src="public/images/logo.jpg" width="140" alt="Ghost brand mark"/> |
 
-1. Create a free Cloudinary account
-2. Copy cloud name, API key, and API secret into `.env`
-3. Uploads work from **Admin → Media** and from form image uploaders
+A classic **sheet ghost** on saffron — neo-brutal borders, gold disc, hard black shadow. Built to read small (favicon) and large (share cards).
 
-Without Cloudinary, the rest of the app works; media upload returns a clear error.
+---
 
-## Security notes
+## Cultural note
 
-- Admin routes and `/api/admin/*` are protected by Auth.js middleware
-- Passwords hashed with bcrypt
-- Zod validation on forms and APIs
-- Rate limits on login, submissions, and contact
-- Image type + size validation (JPEG/PNG/WebP/GIF, 5MB)
-- Rich text sanitized on render (DOMPurify)
-- Secrets stay server-side (never expose Cloudinary secret or `DATABASE_URL` to the client)
+BhootKosh is an **educational folklore archive**.
 
-## Deployment (Vercel)
+- Legends **vary** by region, language, and teller  
+- Entries are **not** scientific claims  
+- Haunted-place pages are **cultural narrative**, not travel or safety advice  
+- Sensitive topics (e.g. witchcraft accusations) are handled carefully — folklore can touch real harm  
 
-1. Push the repo to GitHub
-2. Create a Vercel project from the repo
-3. Add all env vars (production `DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`, Cloudinary, `NEXT_PUBLIC_SITE_URL`)
-4. Set `DATABASE_URL` to your MongoDB Atlas URI (with database name in the path)
-5. Push schema and seed against production:
+Document with respect. Scare with stories, not with people.
 
-```bash
-npx prisma db push
-npm run db:seed
-```
+---
 
-6. Deploy
+## Built with
 
-For multi-instance rate limiting, replace the in-memory limiter in `lib/rate-limit.ts` with Upstash Redis or similar.
+Next.js · TypeScript · Tailwind · MongoDB + Prisma · Auth.js · TipTap · Cloudinary · a little late-night courage  
 
-## Project structure
+---
 
-```txt
-app/
-  (public)/          # Public pages
-  admin/             # Admin dashboard
-  api/               # Route handlers
-components/
-  public/ admin/ ui/
-lib/                 # prisma, auth, cloudinary, validators, seo…
-prisma/              # schema + seed
-```
+<p align="center">
+  <img src="public/images/ghosts/shakchunni.jpg" width="420" alt="Shakchunni" />
+</p>
 
-## Cultural disclaimer
-
-BhootKosh is an educational folklore archive. Legends vary by region, language, and community. Entries are not scientific claims. Haunted-place material is cultural narrative—not travel or safety advice. Some topics (e.g. witchcraft accusations) are documented carefully because folklore can intersect with real-world harm.
-
-## License
-
-Private / all rights reserved unless otherwise stated by the project owner.
+<p align="center">
+  <strong>◈ BhootKosh</strong><br/>
+  <em>Indian Folklore Archive</em><br/><br/>
+  <sub>Private project · All rights reserved unless stated by the owner</sub>
+</p>

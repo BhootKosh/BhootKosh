@@ -4,7 +4,7 @@ export const runtime = "edge";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Apple touch icon */
+/** Apple touch icon — neo-brutal sheet ghost */
 export default function AppleIcon() {
   return new ImageResponse(
     (
@@ -35,11 +35,47 @@ export default function AppleIcon() {
               width: 72,
               height: 72,
               background: "#f4c430",
-              border: "6px solid #0a0a0a",
-              transform: "rotate(45deg)",
+              border: "5px solid #0a0a0a",
+              borderRadius: 999,
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          />
+          >
+            <div
+              style={{
+                width: 48,
+                height: 54,
+                background: "#fffdf8",
+                border: "4px solid #0a0a0a",
+                borderRadius: "24px 24px 8px 8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                paddingTop: 10,
+              }}
+            >
+              <div
+                style={{
+                  width: 8,
+                  height: 10,
+                  background: "#0a0a0a",
+                  borderRadius: 4,
+                  display: "flex",
+                }}
+              />
+              <div
+                style={{
+                  width: 8,
+                  height: 10,
+                  background: "#0a0a0a",
+                  borderRadius: 4,
+                  display: "flex",
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     ),

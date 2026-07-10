@@ -7,13 +7,13 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-10 md:grid-cols-3 lg:px-8">
         <div>
           <div className="flex items-center gap-3">
-            <span className="relative flex h-12 w-12 overflow-hidden border-[3px] border-gold bg-saffron shadow-[3px_3px_0_0_#f4c430]">
+            <span className="relative flex h-12 w-12 items-center justify-center overflow-hidden border-[3px] border-gold bg-saffron shadow-[3px_3px_0_0_#f4c430]">
               <Image
                 src="/images/logo.svg"
-                alt="BhootKosh"
+                alt="BhootKosh — ghost logo"
                 width={48}
                 height={48}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain p-0.5"
               />
             </span>
             <p className="font-display text-2xl uppercase text-gold">

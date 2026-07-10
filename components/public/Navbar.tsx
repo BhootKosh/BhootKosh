@@ -40,13 +40,13 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b-[3px] border-ink bg-gold/95 backdrop-blur-sm supports-[backdrop-filter]:bg-gold/90">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-5 sm:py-3">
         <Link href="/" className="group flex min-w-0 items-center gap-2">
-          <span className="relative flex h-10 w-10 shrink-0 overflow-hidden border-[3px] border-ink bg-saffron shadow-[3px_3px_0_0_#0a0a0a] transition group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0_0_#0a0a0a] sm:h-11 sm:w-11">
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden border-[3px] border-ink bg-saffron shadow-[3px_3px_0_0_#0a0a0a] transition group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0_0_#0a0a0a] sm:h-11 sm:w-11">
             <Image
               src="/images/logo.svg"
-              alt="BhootKosh"
+              alt="BhootKosh — ghost logo"
               width={44}
               height={44}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain p-0.5"
               priority
             />
           </span>
