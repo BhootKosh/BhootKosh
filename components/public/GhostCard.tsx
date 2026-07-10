@@ -15,7 +15,14 @@ export type GhostCardData = {
   region?: { name: string; slug: string } | null;
 };
 
-export function GhostCard({ ghost }: { ghost: GhostCardData }) {
+export function GhostCard({
+  ghost,
+  priority = false,
+}: {
+  ghost: GhostCardData;
+  /** Set true for above-the-fold LCP candidates (first row / hero cards). */
+  priority?: boolean;
+}) {
   return (
     <Link
       href={`/ghosts/${ghost.slug}`}
@@ -25,8 +32,10 @@ export function GhostCard({ ghost }: { ghost: GhostCardData }) {
         {ghost.image ? (
           <Image
             src={ghost.image}
-            alt=""
+            alt={ghost.name}
             fill
+            // priority implies loading="eager" + high fetch priority (fixes LCP warnings)
+            priority={priority}
             className="object-cover transition duration-200 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, 33vw"
           />

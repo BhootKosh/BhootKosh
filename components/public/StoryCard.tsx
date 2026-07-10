@@ -12,7 +12,13 @@ export type StoryCardData = {
   region?: { name: string } | null;
 };
 
-export function StoryCard({ story }: { story: StoryCardData }) {
+export function StoryCard({
+  story,
+  priority = false,
+}: {
+  story: StoryCardData;
+  priority?: boolean;
+}) {
   return (
     <Link
       href={`/stories/${story.slug}`}
@@ -22,8 +28,9 @@ export function StoryCard({ story }: { story: StoryCardData }) {
         {story.coverImage ? (
           <Image
             src={story.coverImage}
-            alt=""
+            alt={story.title}
             fill
+            priority={priority}
             className="object-cover transition duration-200 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, 33vw"
           />

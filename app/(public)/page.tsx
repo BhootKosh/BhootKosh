@@ -59,8 +59,8 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredGhosts.map((g) => (
-                <GhostCard key={g.id} ghost={g} />
+              {featuredGhosts.map((g, i) => (
+                <GhostCard key={g.id} ghost={g} priority={i < 3} />
               ))}
             </div>
           )}
@@ -103,8 +103,8 @@ export default async function HomePage() {
             subtitle="Forts, villages, beaches, and ruins of legend."
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {places.map((p) => (
-              <HauntedPlaceCard key={p.id} place={p} />
+            {places.map((p, i) => (
+              <HauntedPlaceCard key={p.id} place={p} priority={i < 2} />
             ))}
           </div>
         </section>

@@ -13,7 +13,13 @@ export type HauntedPlaceCardData = {
   region?: { name: string } | null;
 };
 
-export function HauntedPlaceCard({ place }: { place: HauntedPlaceCardData }) {
+export function HauntedPlaceCard({
+  place,
+  priority = false,
+}: {
+  place: HauntedPlaceCardData;
+  priority?: boolean;
+}) {
   const image = place.images?.[0];
   const plainLegend = place.legend?.replace(/<[^>]+>/g, "") || "";
 
@@ -26,8 +32,9 @@ export function HauntedPlaceCard({ place }: { place: HauntedPlaceCardData }) {
         {image ? (
           <Image
             src={image}
-            alt=""
+            alt={place.name}
             fill
+            priority={priority}
             className="object-cover transition duration-200 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, 33vw"
           />

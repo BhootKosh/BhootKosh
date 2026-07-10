@@ -122,8 +122,8 @@ export default async function GhostsPage({
             <EmptyState title="No spirits found" />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {ghosts.map((g) => (
-                <GhostCard key={g.id} ghost={g} />
+              {ghosts.map((g, i) => (
+                <GhostCard key={g.id} ghost={g} priority={i < 3} />
               ))}
             </div>
           )}
