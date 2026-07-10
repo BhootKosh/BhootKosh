@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum DangerLevel {
+  LOW
+  MEDIUM
+  HIGH
+  EXTREME
+  UNKNOWN
+}
+
+enum GhostType {
+  FEMALE_SPIRITS
+  RESTLESS_DEAD
+  DEMONS
+  FOREST_SPIRITS
+  RIVER_SPIRITS
+  VILLAGE_SPIRITS
+  SHAPE_SHIFTERS
+  HAUNTED_PLACES
+  MYTHOLOGICAL_BEINGS
+  POSSESSION_LEGENDS
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SourceType {
+  ORAL
+  FAMILY
+  LOCAL_LEGEND
+  BOOK
+  ONLINE
+  OTHER
+}
+
+model AdminUser {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Region {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String   @unique
+  description String?
+  image       String?
+  state       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ghosts        Ghost[]
+  hauntedPlaces HauntedPlace[]
+  stories       Story[]
+}
+
+model Tag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ghosts        Ghost[]        @relation(fields: [ghostIds], references: [id])
+  ghostIds      String[]       @default([]) @db.ObjectId
+  hauntedPlaces HauntedPlace[] @relation(fields: [hauntedPlaceIds], references: [id])
+  hauntedPlaceIds String[]     @default([]) @db.ObjectId
+  stories       Story[]        @relation(fields: [storyIds], references: [id])
+  storyIds      String[]       @default([]) @db.ObjectId
+}
+
+model Ghost {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  slug            String        @unique
+  otherNames      String[]      @default([])
+  type            GhostType
+  regionId        String?       @db.ObjectId
+  region          Region?       @relation(fields: [regionId], references: [id])
+  state           String?
+  dangerLevel     DangerLevel   @default(UNKNOWN)
+  habitat         String?
+  appearance      String?
+  behavior        String?
+  origin          String?
+  summary         String?
+  fullDescription String?
+  culturalNotes   String?
+  sources         String?
+  image           String?
+  gallery         String[]      @default([])
+  status          ContentStatus @default(DRAFT)
+  featured        Boolean       @default(false)
+  viewCount       Int           @default(0)
+  seoTitle        String?
+  seoDescription  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  tags    Tag[]    @relation(fields: [tagIds], references: [id])
+  tagIds  String[] @default([]) @db.ObjectId
+
+  relatedGhosts   Ghost[]  @relation("RelatedGhosts", fields: [relatedGhostIds], references: [id])
+  relatedGhostIds String[] @default([]) @db.ObjectId
+  relatedToGhosts Ghost[]  @relation("RelatedGhosts", fields: [relatedToGhostIds], references: [id])
+  relatedToGhostIds String[] @default([]) @db.ObjectId
+
+  relatedPlaces   HauntedPlace[] @relation("PlaceRelatedGhosts", fields: [relatedPlaceIds], references: [id])
+  relatedPlaceIds String[]       @default([]) @db.ObjectId
+
+  relatedStories   Story[]  @relation("StoryRelatedGhosts", fields: [relatedStoryIds], references: [id])
+  relatedStoryIds  String[] @default([]) @db.ObjectId
+}
+
+model HauntedPlace {
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  slug             String        @unique
+  location         String?
+  state            String?
+  regionId         String?       @db.ObjectId
+  region           Region?       @relation(fields: [regionId], references: [id])
+  history          String?
+  legend           String?
+  reportedActivity String?
+  warning          String?
+  images           String[]      @default([])
+  status           ContentStatus @default(DRAFT)
+  featured         Boolean       @default(false)
+  seoTitle         String?
+  seoDescription   String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+  tagIds String[] @default([]) @db.ObjectId
+
+  relatedGhosts   Ghost[]  @relation("PlaceRelatedGhosts", fields: [relatedGhostIds], references: [id])
+  relatedGhostIds String[] @default([]) @db.ObjectId
+
+  relatedStories   Story[]  @relation("PlaceRelatedStories", fields: [relatedStoryIds], references: [id])
+  relatedStoryIds  String[] @default([]) @db.ObjectId
+}
+
+model Story {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  slug           String        @unique
+  summary        String?
+  content        String?
+  regionId       String?       @db.ObjectId
+  region         Region?       @relation(fields: [regionId], references: [id])
+  coverImage     String?
+  status         ContentStatus @default(DRAFT)
+  featured       Boolean       @default(false)
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+  tagIds String[] @default([]) @db.ObjectId
+
+  relatedGhosts   Ghost[]  @relation("StoryRelatedGhosts", fields: [relatedGhostIds], references: [id])
+  relatedGhostIds String[] @default([]) @db.ObjectId
+
+  relatedPlaces   HauntedPlace[] @relation("PlaceRelatedStories", fields: [relatedPlaceIds], references: [id])
+  relatedPlaceIds String[]       @default([]) @db.ObjectId
+}
+
+model Submission {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  regionText       String
+  story            String
+  sourceType       SourceType       @default(ORAL)
+  contactEmail     String?
+  status           SubmissionStatus @default(PENDING)
+  convertedGhostId String?
+  convertedStoryId String?
+  adminNotes       String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Media {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  publicId  String   @unique
+  url       String
+  secureUrl String
+  width     Int?
+  height    Int?
+  format    String?
+  bytes     Int?
+  alt       String?
+  folder    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  subject   String?
+  message   String
+  createdAt DateTime @default(now())
+}
