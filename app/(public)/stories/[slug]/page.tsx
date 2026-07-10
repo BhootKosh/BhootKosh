@@ -6,7 +6,7 @@ import { GhostCard } from "@/components/public/GhostCard";
 import { ShareButtons } from "@/components/public/ShareButtons";
 import { ensureHtml } from "@/lib/sanitize";
 import { formatDate } from "@/lib/utils";
-import { buildMetadata, getSiteUrl } from "@/lib/seo";
+import { buildMetadata, getSiteUrl, plainText, storyJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: Props) {
       title: story.seoTitle || story.title,
       description:
         story.seoDescription ||
-        story.summary ||
-        `Read ${story.title} on BhootKosh.`,
+        plainText(story.summary || `Read ${story.title} on BhootKosh.`, 180),
       path: `/stories/${story.slug}`,
       image: story.coverImage,
+      type: "article",
     });
   } catch {
     return { title: "Story" };
@@ -63,6 +63,20 @@ export default async function StoryDetailPage({ params }: Props) {
 
   return (
     <article className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            storyJsonLd({
+              title: story.title,
+              summary: story.summary,
+              coverImage: story.coverImage,
+              slug: story.slug,
+              createdAt: story.createdAt,
+            })
+          ),
+        }}
+      />
       <div className="mb-5 flex flex-wrap items-center gap-2 border-[3px] border-ink bg-white px-3 py-2 text-xs font-bold uppercase text-ink shadow-[3px_3px_0_0_#0a0a0a]">
         <Link href="/stories" className="hover:text-saffron">
           Stories

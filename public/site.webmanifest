@@ -1,0 +1,28 @@
+{
+  "name": "BhootKosh — Indian Folklore Archive",
+  "short_name": "BhootKosh",
+  "description": "Illustrated archive of Indian ghosts, spirits, demons, haunted places, and folklore.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2e6d0",
+  "theme_color": "#e85d04",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/images/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

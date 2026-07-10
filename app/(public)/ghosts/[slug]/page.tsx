@@ -27,13 +27,14 @@ export async function generateMetadata({ params }: Props) {
     return buildMetadata({
       title:
         ghost.seoTitle ||
-        `${ghost.name} - The ${ghostTypeLabel(ghost.type)} of Indian Folklore`,
+        `${ghost.name} — ${ghostTypeLabel(ghost.type)} in Indian Folklore`,
       description:
         ghost.seoDescription ||
         ghost.summary ||
-        `Learn about ${ghost.name}, including origin, appearance, and regional legends.`,
+        `Learn about ${ghost.name}: origin, appearance, behavior, and regional legends in Indian folklore.`,
       path: `/ghosts/${ghost.slug}`,
       image: ghost.image,
+      type: "article",
     });
   } catch {
     return { title: "Ghost" };

@@ -1,11 +1,25 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
     <footer className="mt-auto border-t-[3px] border-ink bg-ink text-cream">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-          <p className="font-display text-2xl uppercase text-gold">BhootKosh</p>
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-12 w-12 overflow-hidden border-[3px] border-gold bg-saffron shadow-[3px_3px_0_0_#f4c430]">
+              <Image
+                src="/images/logo.svg"
+                alt="BhootKosh"
+                width={48}
+                height={48}
+                className="h-full w-full object-cover"
+              />
+            </span>
+            <p className="font-display text-2xl uppercase text-gold">
+              BhootKosh
+            </p>
+          </div>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream/85">
             The illustrated archive of Indian ghosts, spirits, demons, haunted
             places, and folklore. Documented for cultural study and respectful

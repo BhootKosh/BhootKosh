@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -24,8 +25,15 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b-[3px] border-ink bg-gold">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-5">
         <Link href="/" className="group flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center border-[3px] border-ink bg-saffron text-lg text-white shadow-[3px_3px_0_0_#0a0a0a]">
-            ◈
+          <span className="relative flex h-11 w-11 shrink-0 overflow-hidden border-[3px] border-ink bg-saffron shadow-[3px_3px_0_0_#0a0a0a]">
+            <Image
+              src="/images/logo.svg"
+              alt="BhootKosh"
+              width={44}
+              height={44}
+              className="h-full w-full object-cover"
+              priority
+            />
           </span>
           <div>
             <span className="font-display text-lg uppercase leading-none tracking-tight text-ink sm:text-xl">

@@ -6,7 +6,7 @@ import { GhostCard } from "@/components/public/GhostCard";
 import { StoryCard } from "@/components/public/StoryCard";
 import { ShareButtons } from "@/components/public/ShareButtons";
 import { ensureHtml } from "@/lib/sanitize";
-import { buildMetadata, getSiteUrl } from "@/lib/seo";
+import { buildMetadata, getSiteUrl, placeJsonLd, plainText } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +20,17 @@ export async function generateMetadata({ params }: Props) {
     });
     if (!place) return { title: "Not found" };
     return buildMetadata({
-      title: place.seoTitle || `${place.name} | Haunted Place`,
+      title: place.seoTitle || `${place.name} | Haunted Place India`,
       description:
         place.seoDescription ||
-        place.legend ||
-        `History and legend of ${place.name}.`,
+        plainText(
+          place.legend ||
+            `History, legend, and folklore of ${place.name}, India.`,
+          180
+        ),
       path: `/haunted-places/${place.slug}`,
       image: place.images?.[0],
+      type: "article",
     });
   } catch {
     return { title: "Haunted Place" };
@@ -69,6 +73,21 @@ export default async function HauntedPlaceDetailPage({ params }: Props) {
 
   return (
     <article className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            placeJsonLd({
+              name: place.name,
+              legend: place.legend,
+              location: place.location,
+              state: place.state,
+              image: images[0],
+              slug: place.slug,
+            })
+          ),
+        }}
+      />
       <div className="mb-5 flex flex-wrap items-center gap-2 border-[3px] border-ink bg-white px-3 py-2 text-xs font-bold uppercase text-ink shadow-[3px_3px_0_0_#0a0a0a]">
         <Link href="/haunted-places" className="hover:text-saffron">
           Haunted Places

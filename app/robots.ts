@@ -8,9 +8,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
+        disallow: ["/admin", "/admin/", "/api/admin", "/api/admin/"],
+      },
+      {
+        userAgent: "GPTBot",
+        allow: "/",
         disallow: ["/admin", "/api/admin"],
       },
     ],
     sitemap: `${base}/sitemap.xml`,
+    host: base,
   };
 }

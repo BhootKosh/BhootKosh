@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Archivo_Black,
   Space_Grotesk,
@@ -9,7 +9,10 @@ import "./globals.css";
 import {
   defaultDescription,
   getMetadataBase,
+  getSiteUrl,
+  siteJsonLd,
   siteName,
+  toAbsoluteUrl,
 } from "@/lib/seo";
 
 const display = Archivo_Black({
@@ -33,6 +36,18 @@ const serif = Libre_Baskerville({
   display: "swap",
 });
 
+const siteUrl = getSiteUrl();
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e85d04" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "light",
+};
+
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
   title: {
@@ -40,13 +55,70 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
   },
   description: defaultDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName, url: siteUrl }],
+  creator: siteName,
+  publisher: siteName,
+  category: "Culture",
+  keywords: [
+    "Indian folklore",
+    "Indian ghosts",
+    "haunted places India",
+    "BhootKosh",
+    "mythology",
+    "spirits",
+    "chudail",
+    "regional legends",
+  ],
+  alternates: {
+    canonical: siteUrl,
+  },
+  icons: {
+    icon: [
+      { url: "/icon", type: "image/png" },
+      { url: "/images/logo.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+    shortcut: ["/icon"],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     type: "website",
     siteName,
     locale: "en_IN",
+    url: siteUrl,
+    title: `${siteName} | Indian Folklore Archive`,
+    description: defaultDescription,
+    images: [
+      {
+        url: toAbsoluteUrl("/opengraph-image"),
+        width: 1200,
+        height: 630,
+        alt: "BhootKosh — Indian Folklore Archive",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    title: `${siteName} | Indian Folklore Archive`,
+    description: defaultDescription,
+    images: [toAbsoluteUrl("/opengraph-image")],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  verification: {
+    // Add when you have them:
+    // google: "your-google-site-verification",
   },
 };
 
@@ -57,11 +129,19 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${display.variable} ${sans.variable} ${serif.variable}`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(siteJsonLd()),
+          }}
+        />
+      </head>
       <body
         className="grain-overlay antialiased"
         style={
