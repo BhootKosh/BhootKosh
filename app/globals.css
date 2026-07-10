@@ -194,13 +194,27 @@
     box-shadow: 1px 1px 0 0 #0a0a0a;
   }
 
-  /* Sticky desktop filter rail */
+  /* Sticky desktop filter rail (neo-brutal sidebar) */
   .sidebar-sticky {
     position: sticky;
-    top: 5.5rem;
-    max-height: calc(100dvh - 6.5rem);
+    top: 5.25rem;
+    max-height: calc(100dvh - 6rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    padding-bottom: 0.5rem;
+    padding-right: 0.25rem;
+  }
+
+  .sidebar-sticky::-webkit-scrollbar {
+    width: 8px;
+  }
+  .sidebar-sticky::-webkit-scrollbar-track {
+    background: #f2e6d0;
+    border-left: 2px solid #0a0a0a;
+  }
+  .sidebar-sticky::-webkit-scrollbar-thumb {
+    background: #0a0a0a;
+    border: 2px solid #f4c430;
   }
 
   /* Mobile bottom nav offset for main content */

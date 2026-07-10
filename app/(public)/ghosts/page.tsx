@@ -110,7 +110,7 @@ export default async function GhostsPage({
         </div>
       </div>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[260px_1fr] lg:gap-7">
+      <div className="grid items-start gap-5 lg:grid-cols-[280px_1fr] lg:gap-8 xl:grid-cols-[300px_1fr]">
         <Suspense fallback={null}>
           <FilterSidebar regions={regions} />
         </Suspense>
