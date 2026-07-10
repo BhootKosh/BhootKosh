@@ -82,7 +82,7 @@ export function BrutalSelect({
         <ul
           id={listId}
           role="listbox"
-          className="absolute left-0 right-0 z-50 mt-2 max-h-60 overflow-y-auto border-[3px] border-ink bg-white shadow-[5px_5px_0_0_#0a0a0a]"
+          className="no-scrollbar absolute left-0 right-0 z-50 mt-2 max-h-60 overflow-y-auto border-[3px] border-ink bg-white shadow-[5px_5px_0_0_#0a0a0a]"
         >
           {options.map((opt) => {
             const active = opt.value === value;

@@ -7,7 +7,6 @@ import {
   ghostTypeLabel,
   GHOST_TYPES,
   DANGER_LEVELS,
-  cn,
 } from "@/lib/utils";
 import { Filter, RotateCcw, X } from "lucide-react";
 import { BrutalSelect } from "@/components/ui/BrutalSelect";
@@ -202,49 +201,17 @@ export function FilterSidebar({
       </div>
 
       {/* Desktop neo-brutal sticky sidebar */}
-      <aside className="sidebar-sticky relative hidden lg:block">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 translate-x-[5px] translate-y-[5px] bg-ink"
-        />
-        <div className="relative border-[3px] border-ink bg-gold">
-          <div className="relative overflow-hidden border-b-[3px] border-ink bg-saffron px-4 py-3">
-            <div className="pointer-events-none absolute inset-0 halftone opacity-25" />
-            <div className="relative flex items-center justify-between gap-2">
-              <div>
-                <p className="font-display text-sm uppercase leading-none text-ink">
-                  Filters
-                </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-ink/75">
-                  Encyclopedia rail
-                </p>
-              </div>
-              <span
-                className={cn(
-                  "border-[3px] border-ink px-2 py-1 text-[10px] font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a]",
-                  activeCount > 0
-                    ? "bg-ink text-gold"
-                    : "bg-white text-ink"
-                )}
-              >
-                {activeCount > 0 ? `${activeCount} on` : "Ready"}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-4 p-4">
-            <p className="border-[3px] border-ink bg-bg-page px-2.5 py-2 text-[11px] font-bold leading-snug text-ink shadow-[3px_3px_0_0_#0a0a0a]">
-              Pick type, region, danger & sort — no bland OS menus.
-            </p>
-            {fields}
-          </div>
-
-          <div className="border-t-[3px] border-ink bg-ink px-3 py-2">
-            <p className="text-center text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-              BhootKosh
-            </p>
-          </div>
+      {/* Desktop sticky filters — clean, no custom scroll chrome */}
+      <aside className="sidebar-sticky hidden space-y-4 border-[3px] border-ink bg-gold p-4 shadow-[4px_4px_0_0_#0a0a0a] lg:block">
+        <div className="flex items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
+          <h2 className="font-display text-sm uppercase text-ink">Filters</h2>
+          {activeCount > 0 && (
+            <span className="border-2 border-ink bg-ink px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold">
+              {activeCount} on
+            </span>
+          )}
         </div>
+        {fields}
       </aside>
 
       {/* Mobile sheet */}
