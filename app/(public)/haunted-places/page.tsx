@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { HauntedPlaceCard } from "@/components/public/HauntedPlaceCard";
 import { SearchBar } from "@/components/public/SearchBar";
@@ -81,16 +82,16 @@ export default async function HauntedPlacesPage({
         </Suspense>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a
+        <Link
           href="/haunted-places"
           className={`border-2 border-ink px-3 py-1 text-xs font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a] ${
             !region ? "bg-ink text-gold" : "bg-white text-ink hover:bg-gold"
           }`}
         >
           All
-        </a>
+        </Link>
         {regions.map((r) => (
-          <a
+          <Link
             key={r.slug}
             href={`/haunted-places?region=${r.slug}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
             className={`border-2 border-ink px-3 py-1 text-xs font-bold uppercase shadow-[2px_2px_0_0_#0a0a0a] ${
@@ -100,7 +101,7 @@ export default async function HauntedPlacesPage({
             }`}
           >
             {r.name}
-          </a>
+          </Link>
         ))}
       </div>
 

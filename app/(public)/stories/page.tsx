@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { StoryCard } from "@/components/public/StoryCard";
 import { SearchBar } from "@/components/public/SearchBar";
@@ -83,14 +84,14 @@ export default async function StoriesPage({
         </Suspense>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a
+        <Link
           href="/stories"
           className={`${chip} ${!region ? "bg-ink text-gold" : "bg-white text-ink hover:bg-gold"}`}
         >
           All regions
-        </a>
+        </Link>
         {regions.map((r) => (
-          <a
+          <Link
             key={r.slug}
             href={`/stories?region=${r.slug}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
             className={`${chip} ${
@@ -100,7 +101,7 @@ export default async function StoriesPage({
             }`}
           >
             {r.name}
-          </a>
+          </Link>
         ))}
       </div>
 

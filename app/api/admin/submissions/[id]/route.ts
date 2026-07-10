@@ -5,6 +5,24 @@ import { createSlug } from "@/lib/utils";
 
 type Ctx = { params: Promise<{ id: string }> };
 
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function paragraphsFromPlainText(text: string) {
+  return text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br />")}</p>`)
+    .join("");
+}
+
 export async function PATCH(req: NextRequest, { params }: Ctx) {
   const session = await requireAdmin();
   if (!session) {
@@ -49,7 +67,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
           type: "VILLAGE_SPIRITS",
           state: submission.regionText,
           summary: submission.story.slice(0, 400),
-          fullDescription: `<p>${submission.story.replace(/\n/g, "</p><p>")}</p>`,
+          fullDescription: paragraphsFromPlainText(submission.story),
           origin: `Submitted as public legend from ${submission.regionText}.`,
           status: "DRAFT",
           dangerLevel: "UNKNOWN",
@@ -78,7 +96,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
           title: submission.name,
           slug,
           summary: submission.story.slice(0, 300),
-          content: `<p>${submission.story.replace(/\n/g, "</p><p>")}</p>`,
+          content: paragraphsFromPlainText(submission.story),
           status: "DRAFT",
         },
       });

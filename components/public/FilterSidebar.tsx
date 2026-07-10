@@ -1,14 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   dangerLabel,
   ghostTypeLabel,
-  GHOST_TYPES,
   DANGER_LEVELS,
+  GHOST_TYPES,
 } from "@/lib/utils";
-import { Filter, RotateCcw, X } from "lucide-react";
+import {
+  Filter,
+  Flame,
+  MapPin,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  SortAsc,
+  Tag,
+  X,
+} from "lucide-react";
 import { BrutalSelect } from "@/components/ui/BrutalSelect";
 
 export function FilterSidebar({
@@ -34,6 +44,16 @@ export function FilterSidebar({
   const danger = searchParams.get("danger") || "";
   const habitat = searchParams.get("habitat") || "";
   const sort = searchParams.get("sort") || "newest";
+  const [habitatDraft, setHabitatDraft] = useState(habitat);
+
+  const sortOptions = useMemo(
+    () => [
+      { value: "newest", label: "Newest" },
+      { value: "name", label: "Name A-Z" },
+      { value: "popularity", label: "Most viewed" },
+    ],
+    []
+  );
 
   const activeCount = useMemo(() => {
     let n = 0;
@@ -45,6 +65,22 @@ export function FilterSidebar({
     return n;
   }, [type, region, danger, habitat, sort]);
 
+  const activeFilters = useMemo(
+    () =>
+      [
+        type && ghostTypeLabel(type),
+        region && regions.find((r) => r.slug === region)?.name,
+        danger && dangerLabel(danger),
+        habitat && habitat,
+        sort !== "newest" && sortOptions.find((o) => o.value === sort)?.label,
+      ].filter(Boolean) as string[],
+    [type, region, regions, danger, habitat, sort, sortOptions]
+  );
+
+  useEffect(() => {
+    setHabitatDraft(habitat);
+  }, [habitat]);
+
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
@@ -55,6 +91,7 @@ export function FilterSidebar({
   }
 
   function clearAll() {
+    setHabitatDraft("");
     router.push(pathname, { scroll: false });
     setOpen(false);
   }
@@ -92,19 +129,31 @@ export function FilterSidebar({
     []
   );
 
-  const sortOptions = [
-    { value: "newest", label: "Newest" },
-    { value: "name", label: "Name A–Z" },
-    { value: "popularity", label: "Most viewed" },
-  ];
-
   const inputClass =
     "w-full min-h-12 border-[3px] border-ink bg-white px-3 py-2.5 text-sm font-bold text-ink shadow-[3px_3px_0_0_#0a0a0a] placeholder:font-medium placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-saffron";
 
   const fields = (
-    <div className="space-y-4">
+    <div className="space-y-3.5">
+      {activeFilters.length > 0 && (
+        <div className="border-[3px] border-ink bg-bg-page p-3 shadow-[3px_3px_0_0_#0a0a0a]">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
+            Active filters
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {activeFilters.map((label) => (
+              <span
+                key={label}
+                className="border-2 border-ink bg-accent-cyan px-2 py-1 text-[10px] font-bold uppercase text-ink shadow-[1px_1px_0_0_#0a0a0a]"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {showType && (
-        <Field label="Type">
+        <Field label="Type" icon={<Tag size={14} />}>
           <BrutalSelect
             aria-label="Spirit type"
             value={type}
@@ -116,7 +165,7 @@ export function FilterSidebar({
       )}
 
       {showRegion && regions.length > 0 && (
-        <Field label="Region">
+        <Field label="Region" icon={<MapPin size={14} />}>
           <BrutalSelect
             aria-label="Region"
             value={region}
@@ -128,7 +177,7 @@ export function FilterSidebar({
       )}
 
       {showDanger && (
-        <Field label="Danger level">
+        <Field label="Danger level" icon={<Flame size={14} />}>
           <BrutalSelect
             aria-label="Danger level"
             value={danger}
@@ -139,23 +188,30 @@ export function FilterSidebar({
         </Field>
       )}
 
-      <Field label="Habitat">
-        <input
-          className={inputClass}
-          placeholder="e.g. forest, fort…"
-          defaultValue={habitat}
-          key={habitat}
-          onBlur={(e) => update("habitat", e.target.value.trim())}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              update("habitat", (e.target as HTMLInputElement).value.trim());
-            }
-          }}
-        />
+      <Field label="Habitat" icon={<Search size={14} />}>
+        <div className="grid grid-cols-[1fr_48px] gap-2">
+          <input
+            className={inputClass}
+            placeholder="forest, fort, river"
+            value={habitatDraft}
+            onChange={(e) => setHabitatDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") update("habitat", habitatDraft.trim());
+            }}
+          />
+          <button
+            type="button"
+            aria-label="Apply habitat filter"
+            onClick={() => update("habitat", habitatDraft.trim())}
+            className="inline-flex min-h-12 items-center justify-center border-[3px] border-ink bg-saffron text-white shadow-[3px_3px_0_0_#0a0a0a] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#0a0a0a] active:translate-x-0.5 active:translate-y-0.5"
+          >
+            <Search size={17} strokeWidth={3} />
+          </button>
+        </div>
       </Field>
 
       {showSort && (
-        <Field label="Sort">
+        <Field label="Sort" icon={<SortAsc size={14} />}>
           <BrutalSelect
             aria-label="Sort"
             value={sort}
@@ -169,7 +225,7 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={clearAll}
-          className="flex w-full min-h-12 items-center justify-center gap-2 border-[3px] border-ink bg-white px-3 py-2.5 text-xs font-bold uppercase text-ink shadow-[4px_4px_0_0_#0a0a0a] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#0a0a0a] active:translate-x-0.5 active:translate-y-0.5"
+          className="flex w-full min-h-12 items-center justify-center gap-2 border-[3px] border-ink bg-white px-3 py-2.5 text-xs font-bold uppercase text-ink shadow-[4px_4px_0_0_#0a0a0a] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-gold hover:shadow-[5px_5px_0_0_#0a0a0a] active:translate-x-0.5 active:translate-y-0.5"
         >
           <RotateCcw size={14} />
           Clear filters ({activeCount})
@@ -180,7 +236,6 @@ export function FilterSidebar({
 
   return (
     <>
-      {/* Mobile */}
       <div className="mb-4 lg:hidden">
         <button
           type="button"
@@ -200,21 +255,26 @@ export function FilterSidebar({
         </button>
       </div>
 
-      {/* Desktop neo-brutal sticky sidebar */}
-      {/* Desktop sticky filters — clean, no custom scroll chrome */}
-      <aside className="sidebar-sticky hidden space-y-4 border-[3px] border-ink bg-gold p-4 shadow-[4px_4px_0_0_#0a0a0a] lg:block">
-        <div className="flex items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
-          <h2 className="font-display text-sm uppercase text-ink">Filters</h2>
-          {activeCount > 0 && (
-            <span className="border-2 border-ink bg-ink px-1.5 py-0.5 text-[10px] font-bold uppercase text-gold">
-              {activeCount} on
-            </span>
-          )}
+      <aside className="sidebar-sticky hidden overflow-hidden border-[3px] border-ink bg-bg-card shadow-[6px_6px_0_0_#0a0a0a] lg:block">
+        <div className="border-b-[3px] border-ink bg-ink p-4 text-gold">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="inline-flex items-center gap-2 font-display text-sm uppercase text-gold">
+              <SlidersHorizontal size={16} strokeWidth={3} />
+              Filters
+            </h2>
+            {activeCount > 0 && (
+              <span className="border-2 border-gold bg-gold px-1.5 py-0.5 text-[10px] font-bold uppercase text-ink">
+                {activeCount} on
+              </span>
+            )}
+          </div>
+          <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-gold/70">
+            Refine the archive
+          </p>
         </div>
-        {fields}
+        <div className="space-y-4 bg-gold/85 p-4">{fields}</div>
       </aside>
 
-      {/* Mobile sheet */}
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <button
@@ -224,21 +284,22 @@ export function FilterSidebar({
             onClick={() => setOpen(false)}
           />
           <div className="sheet-enter absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-y-auto border-t-[3px] border-ink bg-bg-page pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-[0_-8px_0_0_#0a0a0a]">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-ink bg-gold px-4 py-3">
-              <h2 className="font-display text-base uppercase text-ink">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-ink bg-ink px-4 py-3 text-gold">
+              <h2 className="inline-flex items-center gap-2 font-display text-base uppercase text-gold">
+                <SlidersHorizontal size={16} strokeWidth={3} />
                 Filters
               </h2>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="inline-flex min-h-11 min-w-11 items-center justify-center border-[3px] border-ink bg-white shadow-[2px_2px_0_0_#0a0a0a]"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center border-[3px] border-ink bg-gold text-ink shadow-[2px_2px_0_0_#0a0a0a]"
                 aria-label="Close"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="p-4">{fields}</div>
-            <div className="px-4 pb-3">
+            <div className="bg-gold/85 p-4">{fields}</div>
+            <div className="bg-gold/85 px-4 pb-3">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -256,14 +317,17 @@ export function FilterSidebar({
 
 function Field({
   label,
+  icon,
   children,
 }: {
   label: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.12em] text-ink">
+      <label className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink">
+        {icon}
         {label}
       </label>
       {children}

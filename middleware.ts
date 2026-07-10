@@ -1,26 +1,16 @@
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { authConfig } from "@/lib/auth.config";
 
 /**
- * Edge middleware — JWT cookie check only.
- * Uses next-auth/jwt (Edge-safe). Does NOT import Prisma or full Auth config.
+ * Edge middleware: use Auth.js' own session parser so admin route checks
+ * stay in sync with the login/session code.
  */
-export async function middleware(req: NextRequest) {
+const { auth } = NextAuth(authConfig);
+
+export const middleware = auth((req) => {
   const { pathname } = req.nextUrl;
-
-  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
-
-  let isLoggedIn = false;
-  if (secret) {
-    try {
-      const token = await getToken({ req, secret });
-      isLoggedIn = Boolean(token?.email || token?.sub);
-    } catch (err) {
-      console.warn("[middleware] getToken failed", err);
-      isLoggedIn = false;
-    }
-  }
+  const isLoggedIn = Boolean(req.auth?.user?.email || req.auth?.user);
 
   const isAdminPage =
     pathname.startsWith("/admin") && pathname !== "/admin/login";
@@ -41,7 +31,7 @@ export async function middleware(req: NextRequest) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*"],

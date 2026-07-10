@@ -175,12 +175,9 @@ async function getStories() {
 }
 
 async function getRegions() {
-  return prisma.region.findMany({
+  const regions = await prisma.region.findMany({
     orderBy: { name: "asc" },
     include: {
-      _count: {
-        select: { ghosts: true, hauntedPlaces: true, stories: true },
-      },
       ghosts: {
         where: { status: "PUBLISHED" },
         take: 4,
@@ -195,6 +192,27 @@ async function getRegions() {
       },
     },
   });
+
+  return Promise.all(
+    regions.map(async (region) => {
+      const [ghosts, hauntedPlaces, stories] = await Promise.all([
+        prisma.ghost.count({
+          where: { status: "PUBLISHED", regionId: region.id },
+        }),
+        prisma.hauntedPlace.count({
+          where: { status: "PUBLISHED", regionId: region.id },
+        }),
+        prisma.story.count({
+          where: { status: "PUBLISHED", regionId: region.id },
+        }),
+      ]);
+
+      return {
+        ...region,
+        _count: { ghosts, hauntedPlaces, stories },
+      };
+    })
+  );
 }
 
 async function getTypeCounts() {

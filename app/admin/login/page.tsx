@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validators";
@@ -10,7 +11,16 @@ import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<LoginShell />}>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const {
     register,
@@ -23,25 +33,62 @@ export default function AdminLoginPage() {
   async function onSubmit(data: LoginInput) {
     setError("");
     try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
       });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error || "Login failed");
-        toast.error(json.error || "Login failed");
+
+      if (result?.error) {
+        setError("Invalid email or password");
+        toast.error("Invalid email or password");
         return;
       }
+
       toast.success("Welcome back");
-      router.push("/admin");
+      router.push(searchParams.get("callbackUrl") || "/admin");
       router.refresh();
     } catch {
       setError("Network error");
     }
   }
 
+  return (
+    <LoginShell>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
+        <Input
+          id="email"
+          type="email"
+          label="Email"
+          autoComplete="email"
+          error={errors.email?.message}
+          {...register("email")}
+        />
+        <Input
+          id="password"
+          type="password"
+          label="Password"
+          autoComplete="current-password"
+          error={errors.password?.message}
+          {...register("password")}
+        />
+        {error && (
+          <p
+            className="border-2 border-ink bg-danger-extreme px-3 py-2 text-sm font-bold text-white"
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Signing in..." : "Sign in"}
+        </Button>
+      </form>
+    </LoginShell>
+  );
+}
+
+function LoginShell({ children }: { children?: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink px-4">
       <div className="w-full max-w-md border-[3px] border-ink bg-bg-page p-8 shadow-[8px_8px_0_0_#f4c430]">
@@ -54,35 +101,7 @@ export default function AdminLoginPage() {
         <p className="mt-2 text-center font-serif text-sm text-muted">
           Secure access to the archive dashboard
         </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
-          <Input
-            id="email"
-            type="email"
-            label="Email"
-            autoComplete="email"
-            error={errors.email?.message}
-            {...register("email")}
-          />
-          <Input
-            id="password"
-            type="password"
-            label="Password"
-            autoComplete="current-password"
-            error={errors.password?.message}
-            {...register("password")}
-          />
-          {error && (
-            <p
-              className="border-2 border-ink bg-danger-extreme px-3 py-2 text-sm font-bold text-white"
-              role="alert"
-            >
-              {error}
-            </p>
-          )}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Signing in…" : "Sign in"}
-          </Button>
-        </form>
+        {children}
       </div>
     </div>
   );

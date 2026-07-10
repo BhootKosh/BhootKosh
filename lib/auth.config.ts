@@ -4,7 +4,7 @@ import type { NextAuthConfig } from "next-auth";
  * Edge-safe Auth.js config (no Prisma, no bcrypt, no Node APIs).
  * Used by middleware. Full providers live in lib/auth.ts.
  */
-const authSecret =
+export const authSecret =
   process.env.AUTH_SECRET ||
   process.env.NEXTAUTH_SECRET ||
   "bhootkosh-dev-secret-change-me-in-production-32chars";
