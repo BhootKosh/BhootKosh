@@ -1,5 +1,6 @@
 import { PrismaClient, GhostType, DangerLevel } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { extraGhosts, extraRegions } from "./seed-ghosts-extra";
 
 const prisma = new PrismaClient();
 
@@ -90,6 +91,7 @@ async function main() {
       description:
         "Hill stations and forested ridges with colonial-era and local ghost narratives.",
     },
+    ...extraRegions,
   ];
 
   const regions: Record<string, string> = {};
@@ -615,6 +617,7 @@ async function main() {
       featured: true,
       tagSlugs: ["female-spirit", "possession", "village"],
     },
+    ...extraGhosts,
   ];
 
   const ghostIds: Record<string, string> = {};
@@ -679,11 +682,18 @@ async function main() {
 
   // Related ghosts
   const relatedPairs: [string, string[]][] = [
-    ["chudail", ["shakchunni", "daayan", "mohini-yakshi"]],
+    ["chudail", ["shakchunni", "daayan", "mohini-yakshi", "churail", "hadal"]],
+    ["churail", ["chudail", "hadal", "bhootniya"]],
     ["nishi-daak", ["shakchunni", "bhoot"]],
     ["yakshini", ["mohini-yakshi", "nagin"]],
-    ["munjya", ["brahmadaitya", "preta"]],
-    ["vetala", ["pishacha", "preta"]],
+    ["munjya", ["brahmadaitya", "preta", "masan"]],
+    ["vetala", ["pishacha", "preta", "masan"]],
+    ["masan", ["preta", "khabis", "kichin"]],
+    ["chhalawa", ["pahari-chhalawa", "kichin", "jinn"]],
+    ["pahari-chhalawa", ["chhalawa", "aanchari", "khabis"]],
+    ["aanchari", ["jogini", "bhootniya", "said"]],
+    ["khabis", ["said", "ranbhoot", "masan"]],
+    ["jinn", ["chhalawa", "aseer", "kichin"]],
   ];
   for (const [slug, related] of relatedPairs) {
     if (!ghostIds[slug]) continue;
